@@ -1,0 +1,14 @@
+{
+  "name": "arke",
+  "private": true,
+  "dependencies": {
+    "@rails/webpacker": "^3.2.2",
+    "babel-preset-react": "^6.24.1",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^2.11.1"
+  }
+}
