@@ -1,24 +1,11 @@
-# README
+# Arke
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Arke is an Open-Source Crypto-Currency Arbitrage Platform part of the Rubykube Crypto-Platform.
 
-Things you may want to cover:
+## Installation
 
-* Ruby version
+**Software not released**
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+docker pull rubykube/arke
+```
