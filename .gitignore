@@ -13,6 +13,7 @@
 !/log/.keep
 !/tmp/.keep
 .DS_Store
+.tm_properties
 
 # Ignore uploaded files in development
 /storage/*
