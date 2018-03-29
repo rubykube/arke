@@ -9,6 +9,7 @@ gem 'puma', '~> 3.11'
 gem 'webpacker'
 
 gem 'dry-configurable', '~> 0.7.0'
+gem 'concurrent-ruby', require: 'concurrent'
 
 # Reduces boot times through caching; required in config/boot.rb
 # gem 'bootsnap', github: 'Shopify/bootsnap', require: false
