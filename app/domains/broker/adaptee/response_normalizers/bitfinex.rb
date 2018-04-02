@@ -13,3 +13,7 @@ module Broker
     end
   end
 end
+
+
+# Unable to autoload constant Broker::Adaptee::ResponseNormalizers::Bitfinex,
+# expected /Users/dvanidovskiy/www/arke/app/domains/broker/adaptee/response_normalizers/bitfinex.rb to define it (LoadError)

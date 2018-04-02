@@ -21,7 +21,9 @@ module Broker
 
         request = Net::HTTP::Get.new(url)
 
-        ResponseNormalizers::Craken.order_book(http.request(request).read_body)
+        ::Broker::Adaptee::ResponseNormalizers::Craken.order_book(
+          http.request(request).read_body
+        )
       end
       module_function :order_book
     end

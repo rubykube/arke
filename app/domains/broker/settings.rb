@@ -5,6 +5,7 @@ module Broker
   class Settings
     extend Dry::Configurable
 
-    setting :default_adaptee, 'bitfinex', reader: true
+    setting :default, 'bitfinex', reader: true
+    setting :enabled, %i[bitfinex cex craken], reader: true
   end
 end

@@ -21,7 +21,9 @@ module Broker
 
         request = Net::HTTP::Get.new(url)
 
-        ResponseNormalizers::Cex.order_book(http.request(request).read_body)
+        ::Broker::Adaptee::ResponseNormalizers::Cex.order_book(
+          http.request(request).read_body
+        )
       end
       module_function :order_book
     end
