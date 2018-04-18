@@ -10,7 +10,7 @@ module Broker
           Concurrent::Promises.future { Broker::Adapter.order_book }
         end
 
-      Concurrent::Promises.zip(*jobs).value!
+      Concurrent::Promises.zip(*jobs).value!.flatten
     end
     module_function :order_books
   end

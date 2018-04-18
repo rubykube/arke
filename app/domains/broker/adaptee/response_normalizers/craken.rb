@@ -6,9 +6,21 @@ module Broker
       # Responsible for normalizing response from API
       module Craken
         def order_book(response)
-          response
+          json = JSON.parse(response)['result']['XXBTZUSD']
+          parse(json, 'asks') + parse(json, 'bids')
         end
-        module_function :order_book
+
+        def parse(json, side = 'asks')
+          json[side].map do |line|
+            ActiveSupport::HashWithIndifferentAccess.new(
+              broker: name.demodulize.downcase,
+              side: side.singularize,
+              price: line[0],
+              volumne: line[1]
+            )
+          end
+        end
+        module_function :order_book, :parse
       end
     end
   end

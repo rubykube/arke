@@ -6,14 +6,22 @@ module Broker
       # Responsible for normalizing response from API
       module Bitfinex
         def order_book(response)
-          response
+          json = JSON.parse(response)
+          parse(json, 'asks') + parse(json, 'bids')
         end
-        module_function :order_book
+
+        def parse(json, side = 'asks')
+          json[side].map do |line|
+            ActiveSupport::HashWithIndifferentAccess.new(
+              broker: name.demodulize.downcase,
+              side: side.singularize,
+              price: line['price'],
+              volumne: line['amount']
+            )
+          end
+        end
+        module_function :order_book, :parse
       end
     end
   end
 end
-
-
-# Unable to autoload constant Broker::Adaptee::ResponseNormalizers::Bitfinex,
-# expected /Users/dvanidovskiy/www/arke/app/domains/broker/adaptee/response_normalizers/bitfinex.rb to define it (LoadError)
