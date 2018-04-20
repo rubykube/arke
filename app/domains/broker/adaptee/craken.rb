@@ -2,6 +2,7 @@
 
 require 'uri'
 require 'net/http'
+require 'broker/adaptee/response_normalizers/craken'
 
 module Broker
   module Adaptee

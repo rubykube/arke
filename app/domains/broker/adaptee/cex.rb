@@ -2,6 +2,7 @@
 
 require 'uri'
 require 'net/http'
+require 'broker/adaptee/response_normalizers/cex'
 
 module Broker
   module Adaptee
