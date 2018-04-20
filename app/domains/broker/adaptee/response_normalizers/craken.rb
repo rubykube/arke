@@ -16,7 +16,7 @@ module Broker
               broker: name.demodulize.downcase,
               side: side.singularize,
               price: line[0],
-              volumne: line[1]
+              volume: line[1]
             )
           end
         end

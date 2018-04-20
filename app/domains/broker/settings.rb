@@ -7,5 +7,7 @@ module Broker
 
     setting :default, 'bitfinex', reader: true
     setting :enabled, %i[bitfinex cex craken], reader: true
+    setting :enabled, %i[bitfinex cex craken], reader: true
+    setting :quote_aggregation_interval, 3, reader: true
   end
 end

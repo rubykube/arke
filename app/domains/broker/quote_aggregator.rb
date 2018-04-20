@@ -6,8 +6,8 @@ module Broker
   module QuoteAggregator
     def order_books
       task = Concurrent::TimerTask.new { Broker::Router.order_books }
-      task.execution_interval = 180
-      task.timeout_interval = 15
+      task.execution_interval = Broker::Settings.quote_aggregation_interval
+      task.timeout_interval = Broker::Settings.quote_aggregation_interval * 5
       task.add_observer(Arbitrager::QuoteAggregatorObserver.new, :update)
       task.execute
     end

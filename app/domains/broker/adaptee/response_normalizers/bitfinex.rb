@@ -16,7 +16,7 @@ module Broker
               broker: name.demodulize.downcase,
               side: side.singularize,
               price: line['price'],
-              volumne: line['amount']
+              volume: line['amount']
             )
           end
         end
