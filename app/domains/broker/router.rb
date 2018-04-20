@@ -6,11 +6,13 @@ module Broker
     def order_books
       jobs =
         Broker::Settings.enabled.map do |name|
-          Broker::Adapter.adaptee = name
-          Concurrent::Promises.future { Broker::Adapter.order_book }
+          Concurrent::Promises.future do
+            Broker::Adapter.adaptee = name
+            Broker::Adapter.order_book
+          end
         end
 
-      Concurrent::Promises.zip(*jobs).value!.flatten
+      Concurrent::Promises.zip(*jobs).value!(5).flatten
     end
     module_function :order_books
   end
