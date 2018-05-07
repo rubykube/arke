@@ -14,7 +14,7 @@ Issuing two hedging orders on two different exchanges.
 2. Long buy on exchange with lower market price.
 
 Whether markets go up or down loss on one order is hedged by the profit on another order.
-We borrow (via margin trading) cryptocurrency from exchange/p2p for arbitrage. So we dont store crypto on accounts which impose market risks via market fluctuations.
+We borrow (via margin trading) cryptocurrency from exchange/p2p for arbitrage. So we don't store crypto on accounts which impose market risks via market fluctuations.
 
 ##### Second principal is implemented via:
 1. Having fiat balance on both exchanges.
@@ -40,7 +40,7 @@ Spread closes @9742.20 BTC/USD
 
 Close position on [Kraken](https://www.evernote.com/l/AYOpIXhVy3lFOoroW9-uKYkAEaLA5OhWT1oB/image.png):
 - pay market price (buy on lowest price in red glass of order book)
-0.0024@9742.20, amount: $23.3, fee: $0.13 ($0.06 + $0.06 + $0.01), Profit/Loss: --$1.1 (-5.33%)
+0.0024@9742.20, amount: $23.3, fee: $0.13 ($0.06 + $0.06 + $0.01), Profit/Loss: -$1.1 (-5.33%)
 https://www.evernote.com/l/AYNRQda-c81KjKjC6S3PsQqRnIYs4b5QwsgB/image.png
 
 
