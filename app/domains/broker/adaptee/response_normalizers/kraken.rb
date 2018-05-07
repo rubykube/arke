@@ -4,7 +4,7 @@ module Broker
   module Adaptee
     module ResponseNormalizers
       # Responsible for normalizing response from API
-      module Craken
+      module Kraken
         def order_book(response)
           json = JSON.parse(response)['result']['XXBTZUSD']
 

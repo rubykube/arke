@@ -7,6 +7,8 @@ module Broker
       module Bitfinex
         def order_book(response)
           json = JSON.parse(response)
+          json = aggregate(json, Broker::Settings.quote_aggregation.level)
+
           parse(json, Broker::Settings.quote_aggregation.ask_side) +
             parse(json, Broker::Settings.quote_aggregation.bid_side)
         end
@@ -22,9 +24,6 @@ module Broker
           end
         end
 
-        def method_name
-
-        end
         module_function :order_book, :parse
       end
     end

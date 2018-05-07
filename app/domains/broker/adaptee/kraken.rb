@@ -2,12 +2,12 @@
 
 require 'uri'
 require 'net/http'
-require 'broker/adaptee/response_normalizers/craken'
+require 'broker/adaptee/response_normalizers/kraken'
 
 module Broker
   module Adaptee
     # Responsible for making API request to the exchange
-    module Craken
+    module Kraken
       extend Dry::Configurable
 
       setting :api_url, 'https://api.kraken.com/0/', reader: true
@@ -22,7 +22,7 @@ module Broker
 
         request = Net::HTTP::Get.new(url)
 
-        ::Broker::Adaptee::ResponseNormalizers::Craken.order_book(
+        ::Broker::Adaptee::ResponseNormalizers::Kraken.order_book(
           http.request(request).read_body
         )
       end
