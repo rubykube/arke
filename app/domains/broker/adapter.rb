@@ -10,7 +10,8 @@ module Broker
 
     def adaptee
       return @adaptee if @adaptee.present?
-      self.adaptee = Broker::Settings.default
+      self.adaptee = Broker::Settings::General.default
+      @adaptee
     end
 
     def adaptee=(adaptee)

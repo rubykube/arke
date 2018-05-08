@@ -7,11 +7,11 @@ module Broker
       module Cex
         def order_book(response)
           json = JSON.parse(response)
-          parse(json, Broker::Settings.quote_aggregation.ask_side) +
-            parse(json, Broker::Settings.quote_aggregation.bid_side)
+          parse(json, Broker::Settings::QuoteAggregation.ask_side) +
+            parse(json, Broker::Settings::QuoteAggregation.bid_side)
         end
 
-        def parse(json, side = Broker::Settings.quote_aggregation.ask_side)
+        def parse(json, side = Broker::Settings::QuoteAggregation.ask_side)
           json[side].map do |line|
             ActiveSupport::HashWithIndifferentAccess.new(
               broker: name.demodulize.downcase,

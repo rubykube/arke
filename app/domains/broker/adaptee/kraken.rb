@@ -10,18 +10,21 @@ module Broker
     module Kraken
       extend Dry::Configurable
 
-      setting :api_url, 'https://api.kraken.com/0/', reader: true
-      setting :book, 'public/Depth?pair=', reader: true
-      setting :pair_name, 'xbtusd', reader: true
-
       def order_book
-        url = URI(api_url + book + pair_name)
+        uri = URI.join(
+          Broker::Settings::Kraken.api.uri,
+          "#{Broker::Settings::Kraken.api.version}/",
+          Broker::Settings::Kraken.order_book.uri
+        )
+        uri.query = URI.encode_www_form(
+          pair: Broker::Settings::Kraken.pair,
+          count: Broker::Settings::Kraken.order_book.depth
+        )
 
-        http = Net::HTTP.new(url.host, url.port)
+        http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
 
-        request = Net::HTTP::Get.new(url)
-
+        request = Net::HTTP::Get.new(uri)
         ::Broker::Adaptee::ResponseNormalizers::Kraken.order_book(
           http.request(request).read_body
         )
