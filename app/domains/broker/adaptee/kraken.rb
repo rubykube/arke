@@ -9,9 +9,9 @@ module Broker
     # Responsible for making API request to the exchange
     module Kraken
       def order_book
-        uri = URI.join(
-          Broker::Settings::Kraken.api.uri,
-          "#{Broker::Settings::Kraken.api.version}/",
+        uri = URI(
+          Broker::Settings::Kraken.uri  + '/' +
+          Broker::Settings::Kraken.version  + '/' +
           Broker::Settings::Kraken.order_book.uri
         )
         uri.query = URI.encode_www_form(
