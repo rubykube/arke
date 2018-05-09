@@ -10,9 +10,9 @@ module Broker
     module Cex
       def order_book
         uri = URI(
-          Broker::Settings::Cex.api.uri +
-          Broker::Settings::Cex.order_book.uri +
-          Broker::Settings::Cex.api.pair
+          Broker::Settings::Cex.uri + '/' +
+          Broker::Settings::Cex.order_book.uri + '/' +
+          Broker::Settings::Cex.pair + '/'
         )
 
         uri.query = URI.encode_www_form(
