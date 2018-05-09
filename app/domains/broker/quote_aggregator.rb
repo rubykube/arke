@@ -10,7 +10,7 @@ module Broker
           Broker::Router.order_books
         end
       task.execution_interval = Broker::Settings::QuoteAggregation.interval
-      task.timeout_interval = Broker::Settings::QuoteAggregation.interval * 5
+      task.timeout_interval = Broker::Settings::QuoteAggregation.timeout
       task.add_observer(Arbitrager::QuoteAggregatorObserver.new, :update)
       task.execute
     end

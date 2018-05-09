@@ -8,19 +8,23 @@ module Broker
   module Adaptee
     # Responsible for making API request to the exchange
     module Bitfinex
-      extend Dry::Configurable
-
-      setting :api_url, 'https://api.bitfinex.com/v1/', reader: true
-      setting :book, 'book/', reader: true
-      setting :pair_name, 'btcusd', reader: true
-
       def order_book
-        url = URI(api_url + book + pair_name)
+        uri = URI(
+          Broker::Settings::Bitfinex.uri + '/' +
+          Broker::Settings::Bitfinex.version + '/' +
+          Broker::Settings::Bitfinex.order_book.uri + '/' +
+          Broker::Settings::Bitfinex.pair
+        )
 
-        http = Net::HTTP.new(url.host, url.port)
+        uri.query = URI.encode_www_form(
+          limit_bids: Broker::Settings::Bitfinex.order_book.depth,
+          limit_asks: Broker::Settings::Bitfinex.order_book.depth,
+          group: Broker::Settings::Bitfinex.order_book.group
+        )
+
+        http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
-
-        request = Net::HTTP::Get.new(url)
+        request = Net::HTTP::Get.new(uri)
 
         ::Broker::Adaptee::ResponseNormalizers::Bitfinex.order_book(
           http.request(request).read_body

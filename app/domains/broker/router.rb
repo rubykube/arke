@@ -13,7 +13,9 @@ module Broker
           end
         end
 
-      Concurrent::Promises.zip(*jobs).value!(5).flatten
+      Concurrent::Promises.zip(*jobs).
+        value!(5).
+        flatten
     end
     module_function :order_books
   end

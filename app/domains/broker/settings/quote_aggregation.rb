@@ -8,6 +8,7 @@ module Broker
 
       with_options reader: true do
         setting :interval, 3
+        setting :timeout, 6
         setting :ask_side, 'asks'
         setting :bid_side, 'bids'
       end
