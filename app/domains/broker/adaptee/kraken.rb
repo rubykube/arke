@@ -8,8 +8,6 @@ module Broker
   module Adaptee
     # Responsible for making API request to the exchange
     module Kraken
-      extend Dry::Configurable
-
       def order_book
         uri = URI.join(
           Broker::Settings::Kraken.api.uri,

@@ -8,19 +8,20 @@ module Broker
   module Adaptee
     # Responsible for making API request to the exchange
     module Cex
-      extend Dry::Configurable
-
-      setting :api_url, 'https://cex.io/api/', reader: true
-      setting :book, 'order_book/', reader: true
-      setting :pair_name, 'BTC/USD/', reader: true
-
       def order_book
-        url = URI(api_url + book + pair_name)
+        uri = URI(
+          Broker::Settings::Cex.api.uri +
+          Broker::Settings::Cex.order_book.uri +
+          Broker::Settings::Cex.api.pair
+        )
 
-        http = Net::HTTP.new(url.host, url.port)
+        uri.query = URI.encode_www_form(
+          depth: Broker::Settings::Cex.order_book.depth
+        )
+
+        http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
-
-        request = Net::HTTP::Get.new(url)
+        request = Net::HTTP::Get.new(uri)
 
         ::Broker::Adaptee::ResponseNormalizers::Cex.order_book(
           http.request(request).read_body
