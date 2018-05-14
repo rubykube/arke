@@ -171,6 +171,8 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
+    rubocop-rspec (1.25.1)
+      rubocop (>= 0.53.0)
     ruby-progressbar (1.9.0)
     ruby_dep (1.5.0)
     sprockets (3.7.1)
@@ -212,6 +214,7 @@ DEPENDENCIES
   rails (~> 5.2.0.rc1)
   rspec-rails (~> 3.7)
   rubocop (= 0.54.0)
+  rubocop-rspec (~> 1.25.1)
   web-console (>= 3.3.0)
   webpacker (~> 3.3.1)
 

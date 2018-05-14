@@ -23,7 +23,6 @@ gem 'dry-transaction', github: 'dry-rb/dry-transaction', ref: '406a188'
 group :development, :test do
   gem 'byebug', '~> 10.0.0'
   gem 'pry', '~> 0.11.3'
-  gem 'rspec-rails', '~> 3.7'
 end
 
 group :development do
@@ -33,4 +32,9 @@ group :development do
   gem 'web-console', '>= 3.3.0'
 
   gem 'rubocop', '0.54.0', require: false
+end
+
+group :test do
+  gem 'rspec-rails', '~> 3.7'
+  gem 'rubocop-rspec', '~> 1.25.1'
 end
