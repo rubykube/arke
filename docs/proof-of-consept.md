@@ -18,7 +18,7 @@ We borrow (via margin trading) cryptocurrency from exchange/p2p for arbitrage. S
 
 ##### Second principal is implemented via:
 1. Having fiat balance on both exchanges.
-2. After the arbitrage process ends (spread closes) we return initial margins to accounts in fiat to both accounts by closing positions on exchanges. The balances change only for 'Profit and Loss' amounts.
+2. After the arbitrage process ends (spread closes) we return initial margins to accounts in fiat by closing positions on exchanges. The balances change only for 'Profit and Loss' amounts.
 
 #### Case 1. Market goes up.
 https://www.evernote.com/l/AYMk5oFeMVpOxa05JdWDPm53DZIdT7Z7OmwB/image.png

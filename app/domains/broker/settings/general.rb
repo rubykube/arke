@@ -9,6 +9,8 @@ module Broker
       with_options reader: true do
         setting :default, :bitfinex
         setting :enabled, %i[bitfinex cex kraken]
+        setting :ask_side, 'asks'
+        setting :bid_side, 'bids'
       end
     end
   end
