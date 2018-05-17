@@ -5,7 +5,10 @@ module Arbitrager
   class QuoteAggregatorObserver
     def update(time, result, exception)
       if result
-        print "(#{time}) Execution successfully returned #{result}\n"
+        print "(#{time}) Execution successfully returned #{pp result}\n"
+        bid, ask = Arbitrager::SpreadAnalyzers::PullQuote.new.call(result, :best)
+        print "Best bid: #{bid[:broker].to_s.capitalize}, price: #{bid[:price]}\n"
+        print "Best ask: #{ask[:broker].to_s.capitalize}, price: #{ask[:price]}\n"
       elsif exception.is_a?(Concurrent::TimeoutError)
         print "(#{time}) Execution timed out\n"
       else

@@ -19,10 +19,13 @@ module Arbitrager
       private
 
       def best_quote(quotes)
-        [
-          sort(quotes, Broker::Settings::General.bid_side.singularize).last,
-          sort(quotes, Broker::Settings::General.ask_side.singularize).first
-        ]
+        Concurrent::Array.new
+        (
+          [
+            sort(quotes, Broker::Settings::General.bid_side.singularize).last,
+            sort(quotes, Broker::Settings::General.ask_side.singularize).first
+          ]
+        )
       end
 
       def worst_quote(quotes)

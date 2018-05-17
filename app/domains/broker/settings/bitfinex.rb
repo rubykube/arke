@@ -12,7 +12,7 @@ module Broker
         setting :pair, 'btcusd'
         setting :order_book do
           setting :uri, 'book'
-          setting :depth, 10
+          setting :depth, 3
           setting :group, 1
         end
       end

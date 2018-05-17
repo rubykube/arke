@@ -17,7 +17,7 @@ module Broker
             ActiveSupport::HashWithIndifferentAccess.new(
               broker: name.demodulize.downcase,
               side: side.singularize,
-              price: line[0],
+              price: BigDecimal(line[0].to_s),
               volume: line[1]
             )
           end

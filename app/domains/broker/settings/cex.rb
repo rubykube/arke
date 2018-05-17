@@ -11,7 +11,7 @@ module Broker
         setting :uri, 'https://cex.io/api'
         setting :order_book do
           setting :uri, 'order_book'
-          setting :depth, 10
+          setting :depth, 3
         end
       end
     end

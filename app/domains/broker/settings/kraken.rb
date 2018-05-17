@@ -12,7 +12,7 @@ module Broker
         setting :pair, 'xbtusd'
         setting :order_book do
           setting :uri, 'public/Depth'
-          setting :depth, 10
+          setting :depth, 3
         end
       end
     end
