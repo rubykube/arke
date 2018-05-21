@@ -19,26 +19,41 @@ module Arbitrager
       private
 
       def best_quote(quotes)
-        Concurrent::Array.new
-        (
-          [
-            sort(quotes, Broker::Settings::General.bid_side.singularize).last,
-            sort(quotes, Broker::Settings::General.ask_side.singularize).first
-          ]
-        )
+        [highest_bid(quotes), lowest_ask(quotes)]
       end
 
       def worst_quote(quotes)
-        [
-          sort(quotes, Broker::Settings::General.bid_side.singularize).first,
-          sort(quotes, Broker::Settings::General.ask_side.singularize).last
-        ]
+        [lowest_bid(quotes), highest_ask(quotes)]
       end
 
       def sort(quotes, side)
         quotes
           .select { |q| q[:side] == side }
           .sort_by { |q| q[:price] }
+      end
+
+      def sorted_bid_glass(quotes)
+        sort(quotes, Broker::Settings::General.bid_side.singularize)
+      end
+
+      def sorted_ask_glass(quotes)
+        sort(quotes, Broker::Settings::General.ask_side.singularize)
+      end
+
+      def highest_bid(quotes)
+        sorted_bid_glass(quotes).last
+      end
+
+      def lowest_ask(quotes)
+        sorted_ask_glass(quotes).first
+      end
+
+      def lowest_bid(quotes)
+        sorted_bid_glass(quotes).first
+      end
+
+      def highest_ask(quotes)
+        sorted_ask_glass(quotes).last
       end
     end
   end

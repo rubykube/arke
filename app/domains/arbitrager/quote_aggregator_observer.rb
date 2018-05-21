@@ -9,6 +9,9 @@ module Arbitrager
         bid, ask = Arbitrager::SpreadAnalyzers::PullQuote.new.call(result, :best)
         print "Best bid: #{bid[:broker].to_s.capitalize}, price: #{bid[:price]}\n"
         print "Best ask: #{ask[:broker].to_s.capitalize}, price: #{ask[:price]}\n"
+        print "Spread: #{ Arbitrager::SpreadAnalyzers::GetSpread.new.call(bid[:price], ask[:price])}\n"
+        print "Available Volume: #{ available_volume = Arbitrager::SpreadAnalyzers::AvailableVolume.new.call(bid, ask)}\n"
+        print "Target Volume: #{ Arbitrager::SpreadAnalyzers::TargetVolume.new.call(available_volume)}\n"
       elsif exception.is_a?(Concurrent::TimeoutError)
         print "(#{time}) Execution timed out\n"
       else

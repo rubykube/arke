@@ -18,7 +18,7 @@ module Broker
               broker: name.demodulize.downcase,
               side: side.singularize,
               price: BigDecimal(line['price'].to_s),
-              volume: line['amount']
+              volume: BigDecimal(line['amount'].to_s)
             )
           end
         end
