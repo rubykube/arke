@@ -15,6 +15,18 @@ module Broker
           setting :depth, 3
           setting :group, 1
         end
+        setting :fees do
+          setting :margin do
+            setting :opening, 0.01
+            setting :rollover, 0.01
+            setting :rollover_period, 4
+          end
+          setting :transaction do
+            setting :maker, 0.16
+            setting :taker, 0.26
+          end
+        end
+
       end
     end
   end
