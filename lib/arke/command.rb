@@ -1,5 +1,5 @@
 require 'clamp'
-require 'arke/command/root'
+require 'command/root'
 
 module Arke
   module Command
