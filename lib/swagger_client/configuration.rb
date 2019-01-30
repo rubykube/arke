@@ -12,6 +12,7 @@ module SwaggerClient
 
     # Defines API keys used with API Key authentications.
     attr_accessor :api_key
+    attr_accessor :api_key_secret
 
     # Defines API key prefixes used with API Key authentications.
     #
@@ -46,10 +47,11 @@ module SwaggerClient
     attr_accessor :timeout
 
     def initialize
-      @scheme = 'https'
-      @host = 'www.microkube.com'
+      @scheme = 'http'
+      @host = 'www.devkube.com'
       @base_path = '/api/v2'
-      @api_key = {}
+      @api_key = ''
+      @api_key_secret = ''
       @api_key_prefix = {}
       @timeout = 0
       @debugging = false
