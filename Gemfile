@@ -8,6 +8,8 @@ gem 'clamp'
 gem 'peatio'
 gem 'faye-websocket'
 gem 'eventmachine'
+gem 'typhoeus', '>= 1.0.1'
+gem 'json', '~> 2.1'
 
 gem 'rbtree', '~> 0.4'
 gem 'rspec', '~> 3.0'
