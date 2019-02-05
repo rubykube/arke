@@ -4,6 +4,7 @@ require 'logger'
 require 'tempfile'
 require 'typhoeus'
 require 'uri'
+require 'openssl'
 
 module SwaggerClient
   class ApiClient

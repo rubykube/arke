@@ -1,7 +1,7 @@
 require 'pry'
 
 require 'arke/strategy'
-require 'swagger_client'
+require 'rubykube'
 
 module Arke
   module Command
