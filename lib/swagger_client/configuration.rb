@@ -18,6 +18,7 @@ module SwaggerClient
     # @example parameter name is "api_key", API key is "xxx" (e.g. "api_key=xxx" in query string)
     #   config.api_key['api_key'] = 'xxx'
     attr_accessor :api_key
+    attr_accessor :api_key_secret
 
     # Defines API key prefixes used with API Key authentications.
     #
@@ -116,10 +117,11 @@ module SwaggerClient
     attr_accessor :force_ending_format
 
     def initialize
-      @scheme = 'https'
-      @host = 'www.microkube.com'
+      @scheme = 'http'
+      @host = 'www.devkube.com'
       @base_path = '/api/v2'
-      @api_key = {}
+      @api_key = ''
+      @api_key_secret = ''
       @api_key_prefix = {}
       @timeout = 0
       @client_side_validation = true
@@ -131,7 +133,7 @@ module SwaggerClient
       @debugging = false
       @inject_format = false
       @force_ending_format = false
-      @logger = defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
+      @logger = Logger.new(STDOUT)
 
       yield(self) if block_given?
     end
@@ -181,10 +183,5 @@ module SwaggerClient
       'Basic ' + ["#{username}:#{password}"].pack('m').delete("\r\n")
     end
 
-    # Returns Auth Settings hash for api client.
-    def auth_settings
-      {
-      }
-    end
   end
 end

@@ -2,7 +2,7 @@ FROM ruby:2.5.3 as base
 
 MAINTAINER aartemiev@heliostech.fr
 
-ENV APP_HOME=/home/app 
+ENV APP_HOME=/home/app
 
 ARG UID=1000
 ARG GID=1000

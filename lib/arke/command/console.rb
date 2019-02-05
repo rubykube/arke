@@ -1,16 +1,20 @@
-require 'pry-byebug'
+require 'pry'
 
 require 'arke/strategy'
-require 'arke/strategy/copy'
 require 'swagger_client'
 
 module Arke
   module Command
     class Console < Clamp::Command
+      include SwaggerClient
+
       def execute
-        Arke.module_exec do
-          binding.pry
+        Pry.hooks.add_hook(:before_session, 'arke_load') do |output, binding, pry|
+          output.puts("Arke development console")
         end
+
+        # binding.pry
+        Pry.start
       end
     end
   end
