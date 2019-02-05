@@ -1,6 +1,7 @@
 module Rubykube
   module APIClient
-    def initialize
+    def self.configure(&block)
+      SwaggerClient.configure(&block)
     end
   end
 end
