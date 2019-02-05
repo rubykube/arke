@@ -1,4 +1,4 @@
-require 'swagger_client'
+require 'api'
 require 'rubykube/api_client'
 
 module Rubykube

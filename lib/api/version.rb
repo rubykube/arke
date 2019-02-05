@@ -10,6 +10,6 @@ Swagger Codegen version: 2.4.0
 
 =end
 
-module SwaggerClient
+module API
   VERSION = '1.0.0'
 end

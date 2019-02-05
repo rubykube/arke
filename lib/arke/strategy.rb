@@ -1,5 +1,5 @@
 # RubyKube API
-require 'swagger_client'
+require 'api'
 
 require 'arke/strategy/copy'
 

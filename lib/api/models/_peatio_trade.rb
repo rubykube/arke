@@ -12,63 +12,58 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  # Get your deposits history.
-  class PeatioDeposit
-    # Unique deposit id.
+module API
+  # Get your executed trades. Trades are sorted in reverse creation order.
+  class PeatioTrade
+    # Trade ID.
     attr_accessor :id
 
-    # Deposit currency id.
-    attr_accessor :currency
+    # Trade price.
+    attr_accessor :price
 
-    # Deposit amount.
-    attr_accessor :amount
+    # Trade volume.
+    attr_accessor :volume
 
-    # Deposit fee.
-    attr_accessor :fee
+    # Trade funds.
+    attr_accessor :funds
 
-    # Deposit transaction id.
-    attr_accessor :txid
+    # Trade market id.
+    attr_accessor :market
 
-    # Number of deposit confirmations.
-    attr_accessor :confirmations
-
-    # Deposit state.
-    attr_accessor :state
-
-    # The datetime when deposit was created.
+    # Trade create time in iso8601 format.
     attr_accessor :created_at
 
-    # The datetime when deposit was completed..
-    attr_accessor :completed_at
+    # Trade side.
+    attr_accessor :side
+
+    # Order id.
+    attr_accessor :order_id
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'id' => :'id',
-        :'currency' => :'currency',
-        :'amount' => :'amount',
-        :'fee' => :'fee',
-        :'txid' => :'txid',
-        :'confirmations' => :'confirmations',
-        :'state' => :'state',
+        :'price' => :'price',
+        :'volume' => :'volume',
+        :'funds' => :'funds',
+        :'market' => :'market',
         :'created_at' => :'created_at',
-        :'completed_at' => :'completed_at'
+        :'side' => :'side',
+        :'order_id' => :'order_id'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'id' => :'Integer',
-        :'currency' => :'String',
-        :'amount' => :'Float',
-        :'fee' => :'Float',
-        :'txid' => :'String',
-        :'confirmations' => :'Integer',
-        :'state' => :'String',
+        :'id' => :'String',
+        :'price' => :'Float',
+        :'volume' => :'Float',
+        :'funds' => :'Float',
+        :'market' => :'String',
         :'created_at' => :'String',
-        :'completed_at' => :'String'
+        :'side' => :'String',
+        :'order_id' => :'Integer'
       }
     end
 
@@ -84,36 +79,32 @@ module SwaggerClient
         self.id = attributes[:'id']
       end
 
-      if attributes.has_key?(:'currency')
-        self.currency = attributes[:'currency']
+      if attributes.has_key?(:'price')
+        self.price = attributes[:'price']
       end
 
-      if attributes.has_key?(:'amount')
-        self.amount = attributes[:'amount']
+      if attributes.has_key?(:'volume')
+        self.volume = attributes[:'volume']
       end
 
-      if attributes.has_key?(:'fee')
-        self.fee = attributes[:'fee']
+      if attributes.has_key?(:'funds')
+        self.funds = attributes[:'funds']
       end
 
-      if attributes.has_key?(:'txid')
-        self.txid = attributes[:'txid']
-      end
-
-      if attributes.has_key?(:'confirmations')
-        self.confirmations = attributes[:'confirmations']
-      end
-
-      if attributes.has_key?(:'state')
-        self.state = attributes[:'state']
+      if attributes.has_key?(:'market')
+        self.market = attributes[:'market']
       end
 
       if attributes.has_key?(:'created_at')
         self.created_at = attributes[:'created_at']
       end
 
-      if attributes.has_key?(:'completed_at')
-        self.completed_at = attributes[:'completed_at']
+      if attributes.has_key?(:'side')
+        self.side = attributes[:'side']
+      end
+
+      if attributes.has_key?(:'order_id')
+        self.order_id = attributes[:'order_id']
       end
     end
 
@@ -136,14 +127,13 @@ module SwaggerClient
       return true if self.equal?(o)
       self.class == o.class &&
           id == o.id &&
-          currency == o.currency &&
-          amount == o.amount &&
-          fee == o.fee &&
-          txid == o.txid &&
-          confirmations == o.confirmations &&
-          state == o.state &&
+          price == o.price &&
+          volume == o.volume &&
+          funds == o.funds &&
+          market == o.market &&
           created_at == o.created_at &&
-          completed_at == o.completed_at
+          side == o.side &&
+          order_id == o.order_id
     end
 
     # @see the `==` method
@@ -155,7 +145,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [id, currency, amount, fee, txid, confirmations, state, created_at, completed_at].hash
+      [id, price, volume, funds, market, created_at, side, order_id].hash
     end
 
     # Builds the object from hash
@@ -215,7 +205,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

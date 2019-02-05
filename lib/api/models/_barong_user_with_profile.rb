@@ -12,28 +12,54 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  # Get all available markets.
-  class PeatioMarket
-    # Unique market id. It's always in the form of xxxyyy,where xxx is the base currency code, yyy is the quotecurrency code, e.g. 'btcusd'. All available markets canbe found at /api/v2/markets.
-    attr_accessor :id
+module API
+  class BarongUserWithProfile
+    attr_accessor :email
 
-    # Market name.
-    attr_accessor :name
+    attr_accessor :uid
+
+    attr_accessor :role
+
+    attr_accessor :level
+
+    # is 2FA enabled for account
+    attr_accessor :otp
+
+    attr_accessor :state
+
+    attr_accessor :profile
+
+    attr_accessor :created_at
+
+    attr_accessor :updated_at
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'name' => :'name'
+        :'email' => :'email',
+        :'uid' => :'uid',
+        :'role' => :'role',
+        :'level' => :'level',
+        :'otp' => :'otp',
+        :'state' => :'state',
+        :'profile' => :'profile',
+        :'created_at' => :'created_at',
+        :'updated_at' => :'updated_at'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'id' => :'String',
-        :'name' => :'String'
+        :'email' => :'String',
+        :'uid' => :'String',
+        :'role' => :'String',
+        :'level' => :'Integer',
+        :'otp' => :'BOOLEAN',
+        :'state' => :'String',
+        :'profile' => :'Profile',
+        :'created_at' => :'String',
+        :'updated_at' => :'String'
       }
     end
 
@@ -45,12 +71,40 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'id')
-        self.id = attributes[:'id']
+      if attributes.has_key?(:'email')
+        self.email = attributes[:'email']
       end
 
-      if attributes.has_key?(:'name')
-        self.name = attributes[:'name']
+      if attributes.has_key?(:'uid')
+        self.uid = attributes[:'uid']
+      end
+
+      if attributes.has_key?(:'role')
+        self.role = attributes[:'role']
+      end
+
+      if attributes.has_key?(:'level')
+        self.level = attributes[:'level']
+      end
+
+      if attributes.has_key?(:'otp')
+        self.otp = attributes[:'otp']
+      end
+
+      if attributes.has_key?(:'state')
+        self.state = attributes[:'state']
+      end
+
+      if attributes.has_key?(:'profile')
+        self.profile = attributes[:'profile']
+      end
+
+      if attributes.has_key?(:'created_at')
+        self.created_at = attributes[:'created_at']
+      end
+
+      if attributes.has_key?(:'updated_at')
+        self.updated_at = attributes[:'updated_at']
       end
     end
 
@@ -72,8 +126,15 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          name == o.name
+          email == o.email &&
+          uid == o.uid &&
+          role == o.role &&
+          level == o.level &&
+          otp == o.otp &&
+          state == o.state &&
+          profile == o.profile &&
+          created_at == o.created_at &&
+          updated_at == o.updated_at
     end
 
     # @see the `==` method
@@ -85,7 +146,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [id, name].hash
+      [email, uid, role, level, otp, state, profile, created_at, updated_at].hash
     end
 
     # Builds the object from hash
@@ -145,7 +206,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

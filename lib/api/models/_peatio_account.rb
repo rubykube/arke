@@ -12,58 +12,33 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  # Get your executed trades. Trades are sorted in reverse creation order.
-  class PeatioTrade
-    # Trade ID.
-    attr_accessor :id
+module API
+  # Get list of user accounts
+  class Account
+    # Currency code.
+    attr_accessor :currency
 
-    # Trade price.
-    attr_accessor :price
+    # Account balance.
+    attr_accessor :balance
 
-    # Trade volume.
-    attr_accessor :volume
-
-    # Trade funds.
-    attr_accessor :funds
-
-    # Trade market id.
-    attr_accessor :market
-
-    # Trade create time in iso8601 format.
-    attr_accessor :created_at
-
-    # Trade side.
-    attr_accessor :side
-
-    # Order id.
-    attr_accessor :order_id
+    # Account locked funds.
+    attr_accessor :locked
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'price' => :'price',
-        :'volume' => :'volume',
-        :'funds' => :'funds',
-        :'market' => :'market',
-        :'created_at' => :'created_at',
-        :'side' => :'side',
-        :'order_id' => :'order_id'
+        :'currency' => :'currency',
+        :'balance' => :'balance',
+        :'locked' => :'locked'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'id' => :'String',
-        :'price' => :'Float',
-        :'volume' => :'Float',
-        :'funds' => :'Float',
-        :'market' => :'String',
-        :'created_at' => :'String',
-        :'side' => :'String',
-        :'order_id' => :'Integer'
+        :'currency' => :'String',
+        :'balance' => :'Float',
+        :'locked' => :'Float'
       }
     end
 
@@ -75,36 +50,16 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'id')
-        self.id = attributes[:'id']
+      if attributes.has_key?(:'currency')
+        self.currency = attributes[:'currency']
       end
 
-      if attributes.has_key?(:'price')
-        self.price = attributes[:'price']
+      if attributes.has_key?(:'balance')
+        self.balance = attributes[:'balance']
       end
 
-      if attributes.has_key?(:'volume')
-        self.volume = attributes[:'volume']
-      end
-
-      if attributes.has_key?(:'funds')
-        self.funds = attributes[:'funds']
-      end
-
-      if attributes.has_key?(:'market')
-        self.market = attributes[:'market']
-      end
-
-      if attributes.has_key?(:'created_at')
-        self.created_at = attributes[:'created_at']
-      end
-
-      if attributes.has_key?(:'side')
-        self.side = attributes[:'side']
-      end
-
-      if attributes.has_key?(:'order_id')
-        self.order_id = attributes[:'order_id']
+      if attributes.has_key?(:'locked')
+        self.locked = attributes[:'locked']
       end
     end
 
@@ -126,14 +81,9 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          price == o.price &&
-          volume == o.volume &&
-          funds == o.funds &&
-          market == o.market &&
-          created_at == o.created_at &&
-          side == o.side &&
-          order_id == o.order_id
+          currency == o.currency &&
+          balance == o.balance &&
+          locked == o.locked
     end
 
     # @see the `==` method
@@ -145,7 +95,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [id, price, volume, funds, market, created_at, side, order_id].hash
+      [currency, balance, locked].hash
     end
 
     # Builds the object from hash
@@ -205,7 +155,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

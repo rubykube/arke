@@ -1,10 +1,12 @@
 require 'pry'
 require 'arke/strategy'
+require 'api'
 
 module Arke
   module Command
     class Console < Clamp::Command
       option '--usage', :flag, 'Show the API client usage example'
+      include API
 
       def execute
         Pry.hooks.add_hook(:before_session, 'arke_load') do |output, binding, pry|

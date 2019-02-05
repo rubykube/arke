@@ -12,8 +12,8 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  class BarongUser
+module API
+  class BarongUserWithFullInfo
     attr_accessor :email
 
     attr_accessor :uid
@@ -22,10 +22,21 @@ module SwaggerClient
 
     attr_accessor :level
 
-    # is 2FA enabled for account
     attr_accessor :otp
 
     attr_accessor :state
+
+    attr_accessor :profile
+
+    attr_accessor :labels
+
+    attr_accessor :phones
+
+    attr_accessor :documents
+
+    attr_accessor :created_at
+
+    attr_accessor :updated_at
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
@@ -35,7 +46,13 @@ module SwaggerClient
         :'role' => :'role',
         :'level' => :'level',
         :'otp' => :'otp',
-        :'state' => :'state'
+        :'state' => :'state',
+        :'profile' => :'profile',
+        :'labels' => :'labels',
+        :'phones' => :'phones',
+        :'documents' => :'documents',
+        :'created_at' => :'created_at',
+        :'updated_at' => :'updated_at'
       }
     end
 
@@ -47,7 +64,13 @@ module SwaggerClient
         :'role' => :'String',
         :'level' => :'Integer',
         :'otp' => :'BOOLEAN',
-        :'state' => :'String'
+        :'state' => :'String',
+        :'profile' => :'Profile',
+        :'labels' => :'Label',
+        :'phones' => :'Phone',
+        :'documents' => :'Document',
+        :'created_at' => :'String',
+        :'updated_at' => :'String'
       }
     end
 
@@ -82,6 +105,30 @@ module SwaggerClient
       if attributes.has_key?(:'state')
         self.state = attributes[:'state']
       end
+
+      if attributes.has_key?(:'profile')
+        self.profile = attributes[:'profile']
+      end
+
+      if attributes.has_key?(:'labels')
+        self.labels = attributes[:'labels']
+      end
+
+      if attributes.has_key?(:'phones')
+        self.phones = attributes[:'phones']
+      end
+
+      if attributes.has_key?(:'documents')
+        self.documents = attributes[:'documents']
+      end
+
+      if attributes.has_key?(:'created_at')
+        self.created_at = attributes[:'created_at']
+      end
+
+      if attributes.has_key?(:'updated_at')
+        self.updated_at = attributes[:'updated_at']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -107,7 +154,13 @@ module SwaggerClient
           role == o.role &&
           level == o.level &&
           otp == o.otp &&
-          state == o.state
+          state == o.state &&
+          profile == o.profile &&
+          labels == o.labels &&
+          phones == o.phones &&
+          documents == o.documents &&
+          created_at == o.created_at &&
+          updated_at == o.updated_at
     end
 
     # @see the `==` method
@@ -119,7 +172,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [email, uid, role, level, otp, state].hash
+      [email, uid, role, level, otp, state, profile, labels, phones, documents, created_at, updated_at].hash
     end
 
     # Builds the object from hash
@@ -179,7 +232,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

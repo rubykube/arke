@@ -12,28 +12,32 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  # Get the order book of specified market.
-  class PeatioOrderBook
-    # Asks in orderbook
-    attr_accessor :asks
+module API
+  class PeatioMember
+    # Member UID.
+    attr_accessor :uid
 
-    # Bids in orderbook
-    attr_accessor :bids
+    # Member email.
+    attr_accessor :email
+
+    # Member accounts.
+    attr_accessor :accounts
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'asks' => :'asks',
-        :'bids' => :'bids'
+        :'uid' => :'uid',
+        :'email' => :'email',
+        :'accounts' => :'accounts'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'asks' => :'Array<Order>',
-        :'bids' => :'Array<Order>'
+        :'uid' => :'String',
+        :'email' => :'String',
+        :'accounts' => :'Array<Account>'
       }
     end
 
@@ -45,15 +49,17 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'asks')
-        if (value = attributes[:'asks']).is_a?(Array)
-          self.asks = value
-        end
+      if attributes.has_key?(:'uid')
+        self.uid = attributes[:'uid']
       end
 
-      if attributes.has_key?(:'bids')
-        if (value = attributes[:'bids']).is_a?(Array)
-          self.bids = value
+      if attributes.has_key?(:'email')
+        self.email = attributes[:'email']
+      end
+
+      if attributes.has_key?(:'accounts')
+        if (value = attributes[:'accounts']).is_a?(Array)
+          self.accounts = value
         end
       end
     end
@@ -76,8 +82,9 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          asks == o.asks &&
-          bids == o.bids
+          uid == o.uid &&
+          email == o.email &&
+          accounts == o.accounts
     end
 
     # @see the `==` method
@@ -89,7 +96,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [asks, bids].hash
+      [uid, email, accounts].hash
     end
 
     # Builds the object from hash
@@ -149,7 +156,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

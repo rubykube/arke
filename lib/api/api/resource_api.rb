@@ -12,7 +12,7 @@ Swagger Codegen version: 2.4.0
 
 require 'uri'
 
-module SwaggerClient
+module API
   class ResourceApi
     attr_accessor :api_client
 

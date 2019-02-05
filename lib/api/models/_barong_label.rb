@@ -12,32 +12,40 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  class PeatioMember
-    # Member UID.
-    attr_accessor :uid
+module API
+  class BarongLabel
+    # Label key. [a-z0-9_-]+ should be used. Min - 3, max - 255 characters.
+    attr_accessor :key
 
-    # Member email.
-    attr_accessor :email
+    # Label value. [A-Za-z0-9_-] should be used. Min - 3, max - 255 characters.
+    attr_accessor :value
 
-    # Member accounts.
-    attr_accessor :accounts
+    # Label scope: 'public' or 'private'
+    attr_accessor :scope
+
+    attr_accessor :created_at
+
+    attr_accessor :updated_at
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'uid' => :'uid',
-        :'email' => :'email',
-        :'accounts' => :'accounts'
+        :'key' => :'key',
+        :'value' => :'value',
+        :'scope' => :'scope',
+        :'created_at' => :'created_at',
+        :'updated_at' => :'updated_at'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'uid' => :'String',
-        :'email' => :'String',
-        :'accounts' => :'Array<Account>'
+        :'key' => :'String',
+        :'value' => :'String',
+        :'scope' => :'String',
+        :'created_at' => :'String',
+        :'updated_at' => :'String'
       }
     end
 
@@ -49,18 +57,24 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'uid')
-        self.uid = attributes[:'uid']
+      if attributes.has_key?(:'key')
+        self.key = attributes[:'key']
       end
 
-      if attributes.has_key?(:'email')
-        self.email = attributes[:'email']
+      if attributes.has_key?(:'value')
+        self.value = attributes[:'value']
       end
 
-      if attributes.has_key?(:'accounts')
-        if (value = attributes[:'accounts']).is_a?(Array)
-          self.accounts = value
-        end
+      if attributes.has_key?(:'scope')
+        self.scope = attributes[:'scope']
+      end
+
+      if attributes.has_key?(:'created_at')
+        self.created_at = attributes[:'created_at']
+      end
+
+      if attributes.has_key?(:'updated_at')
+        self.updated_at = attributes[:'updated_at']
       end
     end
 
@@ -82,9 +96,11 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          uid == o.uid &&
-          email == o.email &&
-          accounts == o.accounts
+          key == o.key &&
+          value == o.value &&
+          scope == o.scope &&
+          created_at == o.created_at &&
+          updated_at == o.updated_at
     end
 
     # @see the `==` method
@@ -96,7 +112,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [uid, email, accounts].hash
+      [key, value, scope, created_at, updated_at].hash
     end
 
     # Builds the object from hash
@@ -156,7 +172,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

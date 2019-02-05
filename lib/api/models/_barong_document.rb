@@ -12,27 +12,22 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  class BarongUserWithFullInfo
-    attr_accessor :email
+module API
+  class BarongDocument
+    # file url
+    attr_accessor :upload
 
-    attr_accessor :uid
+    # document type: passport, driver license
+    attr_accessor :doc_type
 
-    attr_accessor :role
+    # document number: AB123123 type
+    attr_accessor :doc_number
 
-    attr_accessor :level
+    # expire date of uploaded documents
+    attr_accessor :doc_expire
 
-    attr_accessor :otp
-
-    attr_accessor :state
-
-    attr_accessor :profile
-
-    attr_accessor :labels
-
-    attr_accessor :phones
-
-    attr_accessor :documents
+    # any additional stored data
+    attr_accessor :metadata
 
     attr_accessor :created_at
 
@@ -41,16 +36,11 @@ module SwaggerClient
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'email' => :'email',
-        :'uid' => :'uid',
-        :'role' => :'role',
-        :'level' => :'level',
-        :'otp' => :'otp',
-        :'state' => :'state',
-        :'profile' => :'profile',
-        :'labels' => :'labels',
-        :'phones' => :'phones',
-        :'documents' => :'documents',
+        :'upload' => :'upload',
+        :'doc_type' => :'doc_type',
+        :'doc_number' => :'doc_number',
+        :'doc_expire' => :'doc_expire',
+        :'metadata' => :'metadata',
         :'created_at' => :'created_at',
         :'updated_at' => :'updated_at'
       }
@@ -59,16 +49,11 @@ module SwaggerClient
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'email' => :'String',
-        :'uid' => :'String',
-        :'role' => :'String',
-        :'level' => :'Integer',
-        :'otp' => :'BOOLEAN',
-        :'state' => :'String',
-        :'profile' => :'Profile',
-        :'labels' => :'Label',
-        :'phones' => :'Phone',
-        :'documents' => :'Document',
+        :'upload' => :'String',
+        :'doc_type' => :'String',
+        :'doc_number' => :'String',
+        :'doc_expire' => :'String',
+        :'metadata' => :'String',
         :'created_at' => :'String',
         :'updated_at' => :'String'
       }
@@ -82,44 +67,24 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'email')
-        self.email = attributes[:'email']
+      if attributes.has_key?(:'upload')
+        self.upload = attributes[:'upload']
       end
 
-      if attributes.has_key?(:'uid')
-        self.uid = attributes[:'uid']
+      if attributes.has_key?(:'doc_type')
+        self.doc_type = attributes[:'doc_type']
       end
 
-      if attributes.has_key?(:'role')
-        self.role = attributes[:'role']
+      if attributes.has_key?(:'doc_number')
+        self.doc_number = attributes[:'doc_number']
       end
 
-      if attributes.has_key?(:'level')
-        self.level = attributes[:'level']
+      if attributes.has_key?(:'doc_expire')
+        self.doc_expire = attributes[:'doc_expire']
       end
 
-      if attributes.has_key?(:'otp')
-        self.otp = attributes[:'otp']
-      end
-
-      if attributes.has_key?(:'state')
-        self.state = attributes[:'state']
-      end
-
-      if attributes.has_key?(:'profile')
-        self.profile = attributes[:'profile']
-      end
-
-      if attributes.has_key?(:'labels')
-        self.labels = attributes[:'labels']
-      end
-
-      if attributes.has_key?(:'phones')
-        self.phones = attributes[:'phones']
-      end
-
-      if attributes.has_key?(:'documents')
-        self.documents = attributes[:'documents']
+      if attributes.has_key?(:'metadata')
+        self.metadata = attributes[:'metadata']
       end
 
       if attributes.has_key?(:'created_at')
@@ -149,16 +114,11 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          email == o.email &&
-          uid == o.uid &&
-          role == o.role &&
-          level == o.level &&
-          otp == o.otp &&
-          state == o.state &&
-          profile == o.profile &&
-          labels == o.labels &&
-          phones == o.phones &&
-          documents == o.documents &&
+          upload == o.upload &&
+          doc_type == o.doc_type &&
+          doc_number == o.doc_number &&
+          doc_expire == o.doc_expire &&
+          metadata == o.metadata &&
           created_at == o.created_at &&
           updated_at == o.updated_at
     end
@@ -172,7 +132,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [email, uid, role, level, otp, state, profile, labels, phones, documents, created_at, updated_at].hash
+      [upload, doc_type, doc_number, doc_expire, metadata, created_at, updated_at].hash
     end
 
     # Builds the object from hash
@@ -232,7 +192,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

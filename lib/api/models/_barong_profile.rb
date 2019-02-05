@@ -12,78 +12,51 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  # List your withdraws as paginated collection.
-  class PeatioWithdraw
-    # The withdrawal id.
-    attr_accessor :id
+module API
+  class BarongProfile
+    attr_accessor :first_name
 
-    # The currency code.
-    attr_accessor :currency
+    attr_accessor :last_name
 
-    # The withdrawal type
-    attr_accessor :type
+    # Birthday date
+    attr_accessor :dob
 
-    # The withdrawal amount
-    attr_accessor :amount
+    attr_accessor :address
 
-    # The exchange fee.
-    attr_accessor :fee
+    attr_accessor :postcode
 
-    # The withdrawal transaction id.
-    attr_accessor :blockchain_txid
+    attr_accessor :city
 
-    # The beneficiary ID or wallet address on the Blockchain.
-    attr_accessor :rid
+    attr_accessor :country
 
-    # The withdrawal state.
-    attr_accessor :state
-
-    # Number of confirmations.
-    attr_accessor :confirmations
-
-    # The datetimes for the withdrawal.
-    attr_accessor :created_at
-
-    # The datetimes for the withdrawal.
-    attr_accessor :updated_at
-
-    # The datetime when withdraw was completed
-    attr_accessor :done_at
+    # Profile additional fields
+    attr_accessor :metadata
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'currency' => :'currency',
-        :'type' => :'type',
-        :'amount' => :'amount',
-        :'fee' => :'fee',
-        :'blockchain_txid' => :'blockchain_txid',
-        :'rid' => :'rid',
-        :'state' => :'state',
-        :'confirmations' => :'confirmations',
-        :'created_at' => :'created_at',
-        :'updated_at' => :'updated_at',
-        :'done_at' => :'done_at'
+        :'first_name' => :'first_name',
+        :'last_name' => :'last_name',
+        :'dob' => :'dob',
+        :'address' => :'address',
+        :'postcode' => :'postcode',
+        :'city' => :'city',
+        :'country' => :'country',
+        :'metadata' => :'metadata'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'id' => :'Integer',
-        :'currency' => :'String',
-        :'type' => :'String',
-        :'amount' => :'String',
-        :'fee' => :'Float',
-        :'blockchain_txid' => :'String',
-        :'rid' => :'String',
-        :'state' => :'String',
-        :'confirmations' => :'Integer',
-        :'created_at' => :'String',
-        :'updated_at' => :'String',
-        :'done_at' => :'String'
+        :'first_name' => :'String',
+        :'last_name' => :'String',
+        :'dob' => :'Date',
+        :'address' => :'String',
+        :'postcode' => :'String',
+        :'city' => :'String',
+        :'country' => :'String',
+        :'metadata' => :'Object'
       }
     end
 
@@ -95,52 +68,36 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'id')
-        self.id = attributes[:'id']
+      if attributes.has_key?(:'first_name')
+        self.first_name = attributes[:'first_name']
       end
 
-      if attributes.has_key?(:'currency')
-        self.currency = attributes[:'currency']
+      if attributes.has_key?(:'last_name')
+        self.last_name = attributes[:'last_name']
       end
 
-      if attributes.has_key?(:'type')
-        self.type = attributes[:'type']
+      if attributes.has_key?(:'dob')
+        self.dob = attributes[:'dob']
       end
 
-      if attributes.has_key?(:'amount')
-        self.amount = attributes[:'amount']
+      if attributes.has_key?(:'address')
+        self.address = attributes[:'address']
       end
 
-      if attributes.has_key?(:'fee')
-        self.fee = attributes[:'fee']
+      if attributes.has_key?(:'postcode')
+        self.postcode = attributes[:'postcode']
       end
 
-      if attributes.has_key?(:'blockchain_txid')
-        self.blockchain_txid = attributes[:'blockchain_txid']
+      if attributes.has_key?(:'city')
+        self.city = attributes[:'city']
       end
 
-      if attributes.has_key?(:'rid')
-        self.rid = attributes[:'rid']
+      if attributes.has_key?(:'country')
+        self.country = attributes[:'country']
       end
 
-      if attributes.has_key?(:'state')
-        self.state = attributes[:'state']
-      end
-
-      if attributes.has_key?(:'confirmations')
-        self.confirmations = attributes[:'confirmations']
-      end
-
-      if attributes.has_key?(:'created_at')
-        self.created_at = attributes[:'created_at']
-      end
-
-      if attributes.has_key?(:'updated_at')
-        self.updated_at = attributes[:'updated_at']
-      end
-
-      if attributes.has_key?(:'done_at')
-        self.done_at = attributes[:'done_at']
+      if attributes.has_key?(:'metadata')
+        self.metadata = attributes[:'metadata']
       end
     end
 
@@ -162,18 +119,14 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          currency == o.currency &&
-          type == o.type &&
-          amount == o.amount &&
-          fee == o.fee &&
-          blockchain_txid == o.blockchain_txid &&
-          rid == o.rid &&
-          state == o.state &&
-          confirmations == o.confirmations &&
-          created_at == o.created_at &&
-          updated_at == o.updated_at &&
-          done_at == o.done_at
+          first_name == o.first_name &&
+          last_name == o.last_name &&
+          dob == o.dob &&
+          address == o.address &&
+          postcode == o.postcode &&
+          city == o.city &&
+          country == o.country &&
+          metadata == o.metadata
     end
 
     # @see the `==` method
@@ -185,7 +138,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [id, currency, type, amount, fee, blockchain_txid, rid, state, confirmations, created_at, updated_at, done_at].hash
+      [first_name, last_name, dob, address, postcode, city, country, metadata].hash
     end
 
     # Builds the object from hash
@@ -245,7 +198,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

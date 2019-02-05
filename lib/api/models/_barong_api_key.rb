@@ -12,16 +12,21 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  class BarongLabel
-    # Label key. [a-z0-9_-]+ should be used. Min - 3, max - 255 characters.
-    attr_accessor :key
+module API
+  class BarongAPIKey
+    # jwt public key
+    attr_accessor :kid
 
-    # Label value. [A-Za-z0-9_-] should be used. Min - 3, max - 255 characters.
-    attr_accessor :value
+    # cryptographic hash function type
+    attr_accessor :algorithm
 
-    # Label scope: 'public' or 'private'
+    # serialized array of scopes
     attr_accessor :scope
+
+    # active/non-active state of key
+    attr_accessor :state
+
+    attr_accessor :secret
 
     attr_accessor :created_at
 
@@ -30,9 +35,11 @@ module SwaggerClient
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'key' => :'key',
-        :'value' => :'value',
+        :'kid' => :'kid',
+        :'algorithm' => :'algorithm',
         :'scope' => :'scope',
+        :'state' => :'state',
+        :'secret' => :'secret',
         :'created_at' => :'created_at',
         :'updated_at' => :'updated_at'
       }
@@ -41,9 +48,11 @@ module SwaggerClient
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'key' => :'String',
-        :'value' => :'String',
+        :'kid' => :'String',
+        :'algorithm' => :'String',
         :'scope' => :'String',
+        :'state' => :'String',
+        :'secret' => :'String',
         :'created_at' => :'String',
         :'updated_at' => :'String'
       }
@@ -57,16 +66,24 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'key')
-        self.key = attributes[:'key']
+      if attributes.has_key?(:'kid')
+        self.kid = attributes[:'kid']
       end
 
-      if attributes.has_key?(:'value')
-        self.value = attributes[:'value']
+      if attributes.has_key?(:'algorithm')
+        self.algorithm = attributes[:'algorithm']
       end
 
       if attributes.has_key?(:'scope')
         self.scope = attributes[:'scope']
+      end
+
+      if attributes.has_key?(:'state')
+        self.state = attributes[:'state']
+      end
+
+      if attributes.has_key?(:'secret')
+        self.secret = attributes[:'secret']
       end
 
       if attributes.has_key?(:'created_at')
@@ -96,9 +113,11 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          key == o.key &&
-          value == o.value &&
+          kid == o.kid &&
+          algorithm == o.algorithm &&
           scope == o.scope &&
+          state == o.state &&
+          secret == o.secret &&
           created_at == o.created_at &&
           updated_at == o.updated_at
     end
@@ -112,7 +131,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [key, value, scope, created_at, updated_at].hash
+      [kid, algorithm, scope, state, secret, created_at, updated_at].hash
     end
 
     # Builds the object from hash
@@ -172,7 +191,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

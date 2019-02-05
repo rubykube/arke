@@ -12,83 +12,28 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  # Get your orders, results is paginated.
-  class PeatioOrder
-    # Unique order id.
-    attr_accessor :id
+module API
+  # Get the order book of specified market.
+  class PeatioOrderBook
+    # Asks in orderbook
+    attr_accessor :asks
 
-    # Either 'sell' or 'buy'.
-    attr_accessor :side
-
-    # Type of order, either 'limit' or 'market'.
-    attr_accessor :ord_type
-
-    # Price for each unit. e.g.If you want to sell/buy 1 btc at 3000 usd, the price is '3000.0'
-    attr_accessor :price
-
-    # Average execution price, average of price in trades.
-    attr_accessor :avg_price
-
-    # One of 'wait', 'done', or 'cancel'.An order in 'wait' is an active order, waiting fulfillment;a 'done' order is an order fulfilled;'cancel' means the order has been canceled.
-    attr_accessor :state
-
-    # The market in which the order is placed, e.g. 'btcusd'.All available markets can be found at /api/v2/markets.
-    attr_accessor :market
-
-    # Order create time in iso8601 format.
-    attr_accessor :created_at
-
-    # The amount user want to sell/buy.An order could be partially executed,e.g. an order sell 5 btc can be matched with a buy 3 btc order,left 2 btc to be sold; in this case the order's volume would be '5.0',its remaining_volume would be '2.0', its executed volume is '3.0'.
-    attr_accessor :volume
-
-    # The remaining volume, see 'volume'.
-    attr_accessor :remaining_volume
-
-    # The executed volume, see 'volume'.
-    attr_accessor :executed_volume
-
-    # Count of trades.
-    attr_accessor :trades_count
-
-    # Trades wiht this order.
-    attr_accessor :trades
+    # Bids in orderbook
+    attr_accessor :bids
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'side' => :'side',
-        :'ord_type' => :'ord_type',
-        :'price' => :'price',
-        :'avg_price' => :'avg_price',
-        :'state' => :'state',
-        :'market' => :'market',
-        :'created_at' => :'created_at',
-        :'volume' => :'volume',
-        :'remaining_volume' => :'remaining_volume',
-        :'executed_volume' => :'executed_volume',
-        :'trades_count' => :'trades_count',
-        :'trades' => :'trades'
+        :'asks' => :'asks',
+        :'bids' => :'bids'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'id' => :'Integer',
-        :'side' => :'String',
-        :'ord_type' => :'String',
-        :'price' => :'Float',
-        :'avg_price' => :'Float',
-        :'state' => :'String',
-        :'market' => :'String',
-        :'created_at' => :'String',
-        :'volume' => :'Float',
-        :'remaining_volume' => :'Float',
-        :'executed_volume' => :'Float',
-        :'trades_count' => :'Integer',
-        :'trades' => :'Array<Trade>'
+        :'asks' => :'Array<Order>',
+        :'bids' => :'Array<Order>'
       }
     end
 
@@ -100,57 +45,15 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'id')
-        self.id = attributes[:'id']
+      if attributes.has_key?(:'asks')
+        if (value = attributes[:'asks']).is_a?(Array)
+          self.asks = value
+        end
       end
 
-      if attributes.has_key?(:'side')
-        self.side = attributes[:'side']
-      end
-
-      if attributes.has_key?(:'ord_type')
-        self.ord_type = attributes[:'ord_type']
-      end
-
-      if attributes.has_key?(:'price')
-        self.price = attributes[:'price']
-      end
-
-      if attributes.has_key?(:'avg_price')
-        self.avg_price = attributes[:'avg_price']
-      end
-
-      if attributes.has_key?(:'state')
-        self.state = attributes[:'state']
-      end
-
-      if attributes.has_key?(:'market')
-        self.market = attributes[:'market']
-      end
-
-      if attributes.has_key?(:'created_at')
-        self.created_at = attributes[:'created_at']
-      end
-
-      if attributes.has_key?(:'volume')
-        self.volume = attributes[:'volume']
-      end
-
-      if attributes.has_key?(:'remaining_volume')
-        self.remaining_volume = attributes[:'remaining_volume']
-      end
-
-      if attributes.has_key?(:'executed_volume')
-        self.executed_volume = attributes[:'executed_volume']
-      end
-
-      if attributes.has_key?(:'trades_count')
-        self.trades_count = attributes[:'trades_count']
-      end
-
-      if attributes.has_key?(:'trades')
-        if (value = attributes[:'trades']).is_a?(Array)
-          self.trades = value
+      if attributes.has_key?(:'bids')
+        if (value = attributes[:'bids']).is_a?(Array)
+          self.bids = value
         end
       end
     end
@@ -173,19 +76,8 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          side == o.side &&
-          ord_type == o.ord_type &&
-          price == o.price &&
-          avg_price == o.avg_price &&
-          state == o.state &&
-          market == o.market &&
-          created_at == o.created_at &&
-          volume == o.volume &&
-          remaining_volume == o.remaining_volume &&
-          executed_volume == o.executed_volume &&
-          trades_count == o.trades_count &&
-          trades == o.trades
+          asks == o.asks &&
+          bids == o.bids
     end
 
     # @see the `==` method
@@ -197,7 +89,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [id, side, ord_type, price, avg_price, state, market, created_at, volume, remaining_volume, executed_volume, trades_count, trades].hash
+      [asks, bids].hash
     end
 
     # Builds the object from hash
@@ -257,7 +149,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

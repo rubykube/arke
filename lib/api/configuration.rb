@@ -1,6 +1,6 @@
 require 'uri'
 
-module SwaggerClient
+module API
   class Configuration
     # Defines url scheme
     attr_accessor :scheme

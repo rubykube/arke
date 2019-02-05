@@ -12,49 +12,93 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  class BarongAPIKey
-    # jwt public key
-    attr_accessor :kid
+module API
+  # Get a currency
+  class Currency
+    # Currency code.
+    attr_accessor :id
 
-    # cryptographic hash function type
-    attr_accessor :algorithm
+    # Currency name
+    attr_accessor :name
 
-    # serialized array of scopes
-    attr_accessor :scope
+    # Currency symbol
+    attr_accessor :symbol
 
-    # active/non-active state of key
-    attr_accessor :state
+    # Currency transaction exprorer url template
+    attr_accessor :explorer_transaction
 
-    attr_accessor :secret
+    # Currency address exprorer url template
+    attr_accessor :explorer_address
 
-    attr_accessor :created_at
+    # Currency type
+    attr_accessor :type
 
-    attr_accessor :updated_at
+    # Currency deposit fee
+    attr_accessor :deposit_fee
+
+    # Minimal deposit amount
+    attr_accessor :min_deposit_amount
+
+    # Currency withdraw fee
+    attr_accessor :withdraw_fee
+
+    # Minimal withdraw amount
+    attr_accessor :min_withdraw_amount
+
+    # Currency 24h withdraw limit
+    attr_accessor :withdraw_limit_24h
+
+    # Currency 72h withdraw limit
+    attr_accessor :withdraw_limit_72h
+
+    # Currency base factor
+    attr_accessor :base_factor
+
+    # Currency precision
+    attr_accessor :precision
+
+    # Currency icon
+    attr_accessor :icon_url
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'kid' => :'kid',
-        :'algorithm' => :'algorithm',
-        :'scope' => :'scope',
-        :'state' => :'state',
-        :'secret' => :'secret',
-        :'created_at' => :'created_at',
-        :'updated_at' => :'updated_at'
+        :'id' => :'id',
+        :'name' => :'name',
+        :'symbol' => :'symbol',
+        :'explorer_transaction' => :'explorer_transaction',
+        :'explorer_address' => :'explorer_address',
+        :'type' => :'type',
+        :'deposit_fee' => :'deposit_fee',
+        :'min_deposit_amount' => :'min_deposit_amount',
+        :'withdraw_fee' => :'withdraw_fee',
+        :'min_withdraw_amount' => :'min_withdraw_amount',
+        :'withdraw_limit_24h' => :'withdraw_limit_24h',
+        :'withdraw_limit_72h' => :'withdraw_limit_72h',
+        :'base_factor' => :'base_factor',
+        :'precision' => :'precision',
+        :'icon_url' => :'icon_url'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'kid' => :'String',
-        :'algorithm' => :'String',
-        :'scope' => :'String',
-        :'state' => :'String',
-        :'secret' => :'String',
-        :'created_at' => :'String',
-        :'updated_at' => :'String'
+        :'id' => :'String',
+        :'name' => :'String',
+        :'symbol' => :'String',
+        :'explorer_transaction' => :'String',
+        :'explorer_address' => :'String',
+        :'type' => :'String',
+        :'deposit_fee' => :'String',
+        :'min_deposit_amount' => :'String',
+        :'withdraw_fee' => :'String',
+        :'min_withdraw_amount' => :'String',
+        :'withdraw_limit_24h' => :'String',
+        :'withdraw_limit_72h' => :'String',
+        :'base_factor' => :'String',
+        :'precision' => :'String',
+        :'icon_url' => :'String'
       }
     end
 
@@ -66,32 +110,64 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'kid')
-        self.kid = attributes[:'kid']
+      if attributes.has_key?(:'id')
+        self.id = attributes[:'id']
       end
 
-      if attributes.has_key?(:'algorithm')
-        self.algorithm = attributes[:'algorithm']
+      if attributes.has_key?(:'name')
+        self.name = attributes[:'name']
       end
 
-      if attributes.has_key?(:'scope')
-        self.scope = attributes[:'scope']
+      if attributes.has_key?(:'symbol')
+        self.symbol = attributes[:'symbol']
       end
 
-      if attributes.has_key?(:'state')
-        self.state = attributes[:'state']
+      if attributes.has_key?(:'explorer_transaction')
+        self.explorer_transaction = attributes[:'explorer_transaction']
       end
 
-      if attributes.has_key?(:'secret')
-        self.secret = attributes[:'secret']
+      if attributes.has_key?(:'explorer_address')
+        self.explorer_address = attributes[:'explorer_address']
       end
 
-      if attributes.has_key?(:'created_at')
-        self.created_at = attributes[:'created_at']
+      if attributes.has_key?(:'type')
+        self.type = attributes[:'type']
       end
 
-      if attributes.has_key?(:'updated_at')
-        self.updated_at = attributes[:'updated_at']
+      if attributes.has_key?(:'deposit_fee')
+        self.deposit_fee = attributes[:'deposit_fee']
+      end
+
+      if attributes.has_key?(:'min_deposit_amount')
+        self.min_deposit_amount = attributes[:'min_deposit_amount']
+      end
+
+      if attributes.has_key?(:'withdraw_fee')
+        self.withdraw_fee = attributes[:'withdraw_fee']
+      end
+
+      if attributes.has_key?(:'min_withdraw_amount')
+        self.min_withdraw_amount = attributes[:'min_withdraw_amount']
+      end
+
+      if attributes.has_key?(:'withdraw_limit_24h')
+        self.withdraw_limit_24h = attributes[:'withdraw_limit_24h']
+      end
+
+      if attributes.has_key?(:'withdraw_limit_72h')
+        self.withdraw_limit_72h = attributes[:'withdraw_limit_72h']
+      end
+
+      if attributes.has_key?(:'base_factor')
+        self.base_factor = attributes[:'base_factor']
+      end
+
+      if attributes.has_key?(:'precision')
+        self.precision = attributes[:'precision']
+      end
+
+      if attributes.has_key?(:'icon_url')
+        self.icon_url = attributes[:'icon_url']
       end
     end
 
@@ -113,13 +189,21 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          kid == o.kid &&
-          algorithm == o.algorithm &&
-          scope == o.scope &&
-          state == o.state &&
-          secret == o.secret &&
-          created_at == o.created_at &&
-          updated_at == o.updated_at
+          id == o.id &&
+          name == o.name &&
+          symbol == o.symbol &&
+          explorer_transaction == o.explorer_transaction &&
+          explorer_address == o.explorer_address &&
+          type == o.type &&
+          deposit_fee == o.deposit_fee &&
+          min_deposit_amount == o.min_deposit_amount &&
+          withdraw_fee == o.withdraw_fee &&
+          min_withdraw_amount == o.min_withdraw_amount &&
+          withdraw_limit_24h == o.withdraw_limit_24h &&
+          withdraw_limit_72h == o.withdraw_limit_72h &&
+          base_factor == o.base_factor &&
+          precision == o.precision &&
+          icon_url == o.icon_url
     end
 
     # @see the `==` method
@@ -131,7 +215,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [kid, algorithm, scope, state, secret, created_at, updated_at].hash
+      [id, name, symbol, explorer_transaction, explorer_address, type, deposit_fee, min_deposit_amount, withdraw_fee, min_withdraw_amount, withdraw_limit_24h, withdraw_limit_72h, base_factor, precision, icon_url].hash
     end
 
     # Builds the object from hash
@@ -191,7 +275,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

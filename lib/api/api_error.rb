@@ -10,7 +10,7 @@ Swagger Codegen version: 2.4.0
 
 =end
 
-module SwaggerClient
+module API
   class ApiError < StandardError
     attr_reader :code, :response_headers, :response_body
 

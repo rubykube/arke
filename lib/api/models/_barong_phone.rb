@@ -12,33 +12,25 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  # Get list of user accounts
-  class Account
-    # Currency code.
-    attr_accessor :currency
+module API
+  class BarongPhone
+    attr_accessor :country
 
-    # Account balance.
-    attr_accessor :balance
-
-    # Account locked funds.
-    attr_accessor :locked
+    attr_accessor :number
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'currency' => :'currency',
-        :'balance' => :'balance',
-        :'locked' => :'locked'
+        :'country' => :'country',
+        :'number' => :'number'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'currency' => :'String',
-        :'balance' => :'Float',
-        :'locked' => :'Float'
+        :'country' => :'String',
+        :'number' => :'String'
       }
     end
 
@@ -50,16 +42,12 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'currency')
-        self.currency = attributes[:'currency']
+      if attributes.has_key?(:'country')
+        self.country = attributes[:'country']
       end
 
-      if attributes.has_key?(:'balance')
-        self.balance = attributes[:'balance']
-      end
-
-      if attributes.has_key?(:'locked')
-        self.locked = attributes[:'locked']
+      if attributes.has_key?(:'number')
+        self.number = attributes[:'number']
       end
     end
 
@@ -81,9 +69,8 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          currency == o.currency &&
-          balance == o.balance &&
-          locked == o.locked
+          country == o.country &&
+          number == o.number
     end
 
     # @see the `==` method
@@ -95,7 +82,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [currency, balance, locked].hash
+      [country, number].hash
     end
 
     # Builds the object from hash
@@ -155,7 +142,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end

@@ -12,25 +12,63 @@ Swagger Codegen version: 2.4.0
 
 require 'date'
 
-module SwaggerClient
-  class BarongPhone
-    attr_accessor :country
+module API
+  # Get your deposits history.
+  class PeatioDeposit
+    # Unique deposit id.
+    attr_accessor :id
 
-    attr_accessor :number
+    # Deposit currency id.
+    attr_accessor :currency
+
+    # Deposit amount.
+    attr_accessor :amount
+
+    # Deposit fee.
+    attr_accessor :fee
+
+    # Deposit transaction id.
+    attr_accessor :txid
+
+    # Number of deposit confirmations.
+    attr_accessor :confirmations
+
+    # Deposit state.
+    attr_accessor :state
+
+    # The datetime when deposit was created.
+    attr_accessor :created_at
+
+    # The datetime when deposit was completed..
+    attr_accessor :completed_at
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'country' => :'country',
-        :'number' => :'number'
+        :'id' => :'id',
+        :'currency' => :'currency',
+        :'amount' => :'amount',
+        :'fee' => :'fee',
+        :'txid' => :'txid',
+        :'confirmations' => :'confirmations',
+        :'state' => :'state',
+        :'created_at' => :'created_at',
+        :'completed_at' => :'completed_at'
       }
     end
 
     # Attribute type mapping.
     def self.swagger_types
       {
-        :'country' => :'String',
-        :'number' => :'String'
+        :'id' => :'Integer',
+        :'currency' => :'String',
+        :'amount' => :'Float',
+        :'fee' => :'Float',
+        :'txid' => :'String',
+        :'confirmations' => :'Integer',
+        :'state' => :'String',
+        :'created_at' => :'String',
+        :'completed_at' => :'String'
       }
     end
 
@@ -42,12 +80,40 @@ module SwaggerClient
       # convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
 
-      if attributes.has_key?(:'country')
-        self.country = attributes[:'country']
+      if attributes.has_key?(:'id')
+        self.id = attributes[:'id']
       end
 
-      if attributes.has_key?(:'number')
-        self.number = attributes[:'number']
+      if attributes.has_key?(:'currency')
+        self.currency = attributes[:'currency']
+      end
+
+      if attributes.has_key?(:'amount')
+        self.amount = attributes[:'amount']
+      end
+
+      if attributes.has_key?(:'fee')
+        self.fee = attributes[:'fee']
+      end
+
+      if attributes.has_key?(:'txid')
+        self.txid = attributes[:'txid']
+      end
+
+      if attributes.has_key?(:'confirmations')
+        self.confirmations = attributes[:'confirmations']
+      end
+
+      if attributes.has_key?(:'state')
+        self.state = attributes[:'state']
+      end
+
+      if attributes.has_key?(:'created_at')
+        self.created_at = attributes[:'created_at']
+      end
+
+      if attributes.has_key?(:'completed_at')
+        self.completed_at = attributes[:'completed_at']
       end
     end
 
@@ -69,8 +135,15 @@ module SwaggerClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          country == o.country &&
-          number == o.number
+          id == o.id &&
+          currency == o.currency &&
+          amount == o.amount &&
+          fee == o.fee &&
+          txid == o.txid &&
+          confirmations == o.confirmations &&
+          state == o.state &&
+          created_at == o.created_at &&
+          completed_at == o.completed_at
     end
 
     # @see the `==` method
@@ -82,7 +155,7 @@ module SwaggerClient
     # Calculates hash code according to all attributes.
     # @return [Fixnum] Hash code
     def hash
-      [country, number].hash
+      [id, currency, amount, fee, txid, confirmations, state, created_at, completed_at].hash
     end
 
     # Builds the object from hash
@@ -142,7 +215,7 @@ module SwaggerClient
           end
         end
       else # model
-        temp_model = SwaggerClient.const_get(type).new
+        temp_model = API.const_get(type).new
         temp_model.build_from_hash(value)
       end
     end
