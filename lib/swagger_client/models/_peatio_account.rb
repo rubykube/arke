@@ -14,7 +14,7 @@ require 'date'
 
 module SwaggerClient
   # Get list of user accounts
-  class PeatioAccount
+  class Account
     # Currency code.
     attr_accessor :currency
 

@@ -22,7 +22,7 @@ module SwaggerClient
       @config = config
       @default_headers = {
         'Content-Type' => 'application/json',
-        'User-Agent' => "Arke/#{VERSION}/ruby"
+        'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
       }
     end
 
@@ -78,28 +78,16 @@ module SwaggerClient
       url = build_request_url(path)
       http_method = http_method.to_sym.downcase
 
-      header_params = @default_headers.merge(api_key_auth_headers).merge(opts[:header_params])
+      header_params = @default_headers.merge(opts[:header_params])
       query_params = opts[:query_params] || {}
       form_params = opts[:form_params] || {}
 
-      # set ssl_verifyhosts option based on @config.verify_ssl_host (true/false)
-      _verify_ssl_host = @config.verify_ssl_host ? 2 : 0
-
       req_opts = {
-        :method => http_method,
-        :headers => header_params,
-        :params => query_params,
-        :params_encoding => @config.params_encoding,
-        :timeout => @config.timeout,
-        :ssl_verifypeer => @config.verify_ssl,
-        :ssl_verifyhost => _verify_ssl_host,
-        :sslcert => @config.cert_file,
-        :sslkey => @config.key_file,
-        :verbose => @config.debugging
+        method: http_method,
+        headers: header_params.merge(api_key_auth_headers),
+        params: query_params,
+        verbose: @config.debugging
       }
-
-      # set custom cert, if provided
-      req_opts[:cainfo] = @config.ssl_ca_cert if @config.ssl_ca_cert
 
       if [:post, :patch, :put, :delete].include?(http_method)
         req_body = build_request_body(header_params, form_params, opts[:body])

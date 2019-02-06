@@ -31,7 +31,6 @@ module SwaggerClient
     # @param [Hash] opts the optional parameters
     # @return [Array<(Array<Account>, Fixnum, Hash)>] Array<Account> data, response status code and response headers
     def get_account_balances_with_http_info(opts = {})
-      pp @api_client
       if @api_client.config.debugging
         @api_client.config.logger.debug 'Calling API: AccountApi.get_account_balances ...'
       end
