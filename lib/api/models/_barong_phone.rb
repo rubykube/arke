@@ -13,7 +13,7 @@ Swagger Codegen version: 2.4.0
 require 'date'
 
 module API
-  class BarongPhone
+  class Phone
     attr_accessor :country
 
     attr_accessor :number

@@ -14,7 +14,7 @@ require 'date'
 
 module API
   # Get your executed trades. Trades are sorted in reverse creation order.
-  class PeatioTrade
+  class Trade
     # Trade ID.
     attr_accessor :id
 

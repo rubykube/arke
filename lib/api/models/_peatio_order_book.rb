@@ -14,7 +14,7 @@ require 'date'
 
 module API
   # Get the order book of specified market.
-  class PeatioOrderBook
+  class OrderBook
     # Asks in orderbook
     attr_accessor :asks
 

@@ -14,7 +14,7 @@ require 'date'
 
 module API
   # Get your deposits history.
-  class PeatioDeposit
+  class Deposit
     # Unique deposit id.
     attr_accessor :id
 

@@ -13,7 +13,7 @@ Swagger Codegen version: 2.4.0
 require 'date'
 
 module API
-  class BarongDocument
+  class Document
     # file url
     attr_accessor :upload
 

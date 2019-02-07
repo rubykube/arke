@@ -14,7 +14,7 @@ require 'date'
 
 module API
   # List your withdraws as paginated collection.
-  class PeatioWithdraw
+  class Withdraw
     # The withdrawal id.
     attr_accessor :id
 

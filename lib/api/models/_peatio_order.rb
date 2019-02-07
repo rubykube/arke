@@ -14,7 +14,7 @@ require 'date'
 
 module API
   # Get your orders, results is paginated.
-  class PeatioOrder
+  class Order
     # Unique order id.
     attr_accessor :id
 

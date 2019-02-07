@@ -13,7 +13,7 @@ Swagger Codegen version: 2.4.0
 require 'date'
 
 module API
-  class BarongAPIKey
+  class APIKey
     # jwt public key
     attr_accessor :kid
 

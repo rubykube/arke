@@ -13,7 +13,7 @@ Swagger Codegen version: 2.4.0
 require 'date'
 
 module API
-  class BarongLabel
+  class Label
     # Label key. [a-z0-9_-]+ should be used. Min - 3, max - 255 characters.
     attr_accessor :key
 

@@ -13,7 +13,7 @@ Swagger Codegen version: 2.4.0
 require 'date'
 
 module API
-  class BarongProfile
+  class Profile
     attr_accessor :first_name
 
     attr_accessor :last_name

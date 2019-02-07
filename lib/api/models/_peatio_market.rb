@@ -14,7 +14,7 @@ require 'date'
 
 module API
   # Get all available markets.
-  class PeatioMarket
+  class Market
     # Unique market id. It's always in the form of xxxyyy,where xxx is the base currency code, yyy is the quotecurrency code, e.g. 'btcusd'. All available markets canbe found at /api/v2/markets.
     attr_accessor :id
 
