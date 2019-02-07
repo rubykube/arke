@@ -14,7 +14,7 @@ module Arke
 
         # binding.pry
         Pry.config.prompt_name = 'arke'
-        Pry.config.requires = ['openssl', 'rubykube']
+        Pry.config.requires = ['openssl']
         Pry.start
       end
 
