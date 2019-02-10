@@ -7,8 +7,8 @@ module Arke
         EM.run do
 
           api = Arke::Exchange::Rubykube.configure do |config|
-            config.api_key = "11f345e5b3c601a7"
-            config.api_key_secret = "1fb8642bb82ad6bb8df7c1872ad211fd"
+            config.api_key = "2e3f4ce4f72c85f1"
+            config.api_key_secret = "551916d95da79fc7cb49bd2c0334cc27"
             # config.debugging = true
           end
 
