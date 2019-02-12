@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
 $LOAD_PATH << File.expand_path('../lib', __dir__)
-require 'arke/command'
+$LOAD_PATH << File.expand_path('../lib/arke', __dir__)
+
+require 'command'
 
 Arke::Command.run!
