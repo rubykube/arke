@@ -12,8 +12,8 @@ module Arke
       @orders = {}
       @orders_queue = EventMachine::Queue.new
       @book = {
-        ask: ::RBTree.new,
-        bid: ::RBTree.new
+        sell: ::RBTree.new,
+        buy: ::RBTree.new
       }
     end
 

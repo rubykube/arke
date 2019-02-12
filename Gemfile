@@ -6,6 +6,7 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 gem 'clamp'
 gem 'peatio'
+gem 'faraday'
 gem 'faye-websocket'
 gem 'eventmachine'
 gem 'typhoeus', '>= 1.0.1'

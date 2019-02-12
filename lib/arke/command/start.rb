@@ -1,4 +1,6 @@
 require 'exchange/bitfinex'
+require 'rubykube/api_client'
+require 'rubykube/api/market_api'
 
 module Arke
   module Command
@@ -6,11 +8,7 @@ module Arke
       def execute
         EM.run do
 
-          api = Arke::Exchange::Rubykube.configure do |config|
-            config.api_key = "2e3f4ce4f72c85f1"
-            config.api_key_secret = "551916d95da79fc7cb49bd2c0334cc27"
-            # config.debugging = true
-          end
+          market_api = Rubykube::MarketApi.new('e95c154a5f8ed097', '4832b14d56bad2964461c53963b46422')
 
           bf = Arke::Exchange::Bitfinex.new
           bf.start
@@ -20,7 +18,7 @@ module Arke
               EM.add_timer(1) { bf.orderbook.orders_queue.pop(&process_orders) }
             else
               bf.logger.info("Order: #{order}")
-              api.market.create_order(order)
+              market_api.create_order(order)
               bf.orderbook.remove(order.id)
               EM.next_tick { bf.orderbook.orders_queue.pop(&process_orders) }
             end
