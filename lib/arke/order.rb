@@ -11,10 +11,10 @@ module Arke
       @market = market
       @price = price
       @amount = amount
-      @side = :bid
+      @side = :sell
       if amount < 0
         @amount = amount * -1
-        @side = :ask
+        @side = :buy
       end
     end
 
