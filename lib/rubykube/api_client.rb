@@ -3,10 +3,10 @@ require 'openssl'
 
 module Rubykube
   class ApiClient
-    def initialize(api_key, secret)
+    def initialize(host, api_key, secret)
       @api_key = api_key
       @secret = secret
-      @connection = Faraday.new('http://www.devkube.com/api/v2') do |faraday|
+      @connection = Faraday.new("#{host}/api/v2") do |faraday|
         faraday.adapter Faraday.default_adapter
       end
     end

@@ -8,7 +8,7 @@ module Arke
       def execute
         EM.run do
 
-          market_api = Rubykube::MarketApi.new('e95c154a5f8ed097', '4832b14d56bad2964461c53963b46422')
+          market_api = Rubykube::MarketApi.new('http://www.devkube.com', 'e95c154a5f8ed097', '4832b14d56bad2964461c53963b46422')
 
           bf = Arke::Exchange::Bitfinex.new
           bf.start
@@ -17,7 +17,8 @@ module Arke
             if bf.orderbook.nil? || bf.orderbook.empty? || order.nil?
               EM.add_timer(1) { bf.orderbook.orders_queue.pop(&process_orders) }
             else
-              bf.logger.info("Order: #{order}")
+              bf.logger.info("Order: #{order.to_s}")
+              sleep(0.5)
               market_api.create_order(order)
               bf.orderbook.remove(order.id)
               EM.next_tick { bf.orderbook.orders_queue.pop(&process_orders) }

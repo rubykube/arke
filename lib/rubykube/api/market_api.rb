@@ -1,7 +1,7 @@
 module Rubykube
   class MarketApi < ApiClient
-    def initialize(api_key, secret)
-      super(api_key, secret)
+    def initialize(host, api_key, secret)
+      super
     end
 
     def create_order(order)
@@ -25,5 +25,6 @@ module Rubykube
     def post(path, params = nil)
       super
     end
+
   end
 end
