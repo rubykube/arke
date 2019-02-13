@@ -8,7 +8,11 @@ module Arke
       def execute
         EM.run do
 
-          market_api = Rubykube::MarketApi.new('http://www.devkube.com', 'e95c154a5f8ed097', '4832b14d56bad2964461c53963b46422')
+          market_api = Rubykube::MarketApi.new(
+            Arke.configuration.host,
+            Arke.configuration.api_key['key'],
+            Arke.configuration.api_key['secret']
+          )
 
           bf = Arke::Exchange::Bitfinex.new
           bf.start
