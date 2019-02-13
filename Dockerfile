@@ -1,4 +1,4 @@
-FROM ruby:2.5.3 as base
+FROM ruby:2.6.1
 
 MAINTAINER aartemiev@heliostech.fr
 
@@ -16,6 +16,6 @@ WORKDIR $APP_HOME
 
 COPY --chown=app:app . .
 
-RUN bundle install
+RUN gem update bundler && bundle install
 
-CMD ["bin/arke", "version"]:
+ENTRYPOINT ["bin/arke"]

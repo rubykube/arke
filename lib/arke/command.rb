@@ -1,6 +1,7 @@
 require 'clamp'
 require 'command/root'
 require 'configuration'
+require 'yaml'
 
 module Arke
   module Command
