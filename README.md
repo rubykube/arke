@@ -21,27 +21,43 @@ Now you can run Arke using `bin/arke` command.
 
 ### Example usage
 
-To open development console, use `bin/arke console`
+Add platform host and credentials to `config/variables.yaml`
 
-```ruby
-# Configure the API client
-api = Rubykube::APIClient.configure do |config|
-  config.api_key = 'xxxxxxxxxxxxx'
-  config.api_key_secret = 'xxxxxxxxxxxxxxxxxxxxxxx'
-  config.debugging = true
-end
-
-# List all your wallets balances
-api.account.get_accounts_balances
+```yaml
+host: "http://www.devkube.com"
+api_key:
+  key: 'xxxxxxxxxxxxx'
+  secret: 'xxxxxxxxxxxxxxxxxxxxxxx'
 ```
 
-You can also print this example when starting the console:
+To open development console, use `bin/arke console`
+
+Now your configuration variables can be reached with
+```ruby
+Arke.configuration.variable_name
+
+# For example, to get host:
+
+Arke.configuration.host
+
+#For api key:
+Arke.configuration.api_key['key'] # for key
+Arke.configuration.api_key['secret'] # for secret
+```
+And then, to use market api
+
+```ruby
+market_api = Rubykube::MarketApi.new(
+  Arke.configuration.host,
+  Arke.configuration.api_key['key'],
+  Arke.configuration.api_key['secret']
+)
+
+market_api.create_order(order_attrs) # order_attrs - ruby hash with request parameters
+```
+
+To start trading bot type
 
 ```shell
-$ bin/arke console --usage
-================= Example API request =================
-
-# Configure the API client
-api = Rubykube::APIClient.configure do |config|
-# ...
+bin/arke start
 ```
