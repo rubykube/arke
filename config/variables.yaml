@@ -1,0 +1,4 @@
+host: "http://www.devkube.com"
+api_key:
+  key: 'key'
+  secret: 'secret'
