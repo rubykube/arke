@@ -1,3 +1,5 @@
+[![Build Status](https://ci.microkube.com/api/badges/rubykube/arke/status.svg)](https://ci.microkube.com/rubykube/arke)
+
 # Arke
 
 Arke is a trading bot platform built by RubyKube.

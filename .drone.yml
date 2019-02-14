@@ -1,0 +1,110 @@
+---
+kind: pipeline
+name: "master"
+
+steps:
+- name: test
+  image: ruby:2.6.1
+  commands:
+  - gem update bundler
+  - bundle install
+  - bundle exec rspec
+
+- name: "Bump and tag"
+  image: ruby:2.6.1
+  environment:
+    BOT_USERNAME: kite-bot
+    BOT_NAME: Kite Bot
+    BOT_EMAIL: kite-bot@heliostech.fr
+    GITHUB_API_KEY:
+      from_secret: kite_bot_key
+  commands:
+  - gem install bump
+  - git config --global user.name "  Kite Bot"
+  - git config --global user.email "kite-bot@heliostech.fr"
+  - git remote add authenticated-origin https://kite-bot:$GITHUB_API_KEY@github.com/${DRONE_REPO}
+  - git fetch authenticated-origin
+  - bump patch --commit-message 'Bump [ci skip]'
+  - git tag $(cat VERSION)
+  - git push authenticated-origin master
+  - git push --tags authenticated-origin
+  - git describe --tags $(git rev-list --tags --max-count=1) > .tags
+  when:
+    event:
+      - push
+    branch:
+      - master
+
+- name: "Docker build and push"
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: rubykube/arke
+  when:
+    event:
+    - push
+    branch:
+    - master
+
+- name: "Notify about new version"
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_webhook
+    channel:
+      from_secret: slack_channel
+    template: >
+      {{#success build.status}}
+        [SUCCESS] Arke master branch build by {{ build.author }} has succeeded! :sunglasses:
+        Version {{ build.tag }} is pushed to dockerhub!
+      {{else}}
+        [FAILURE] Master branch build by {{ build.author }} has failed! :pepe:
+      {{/success}}
+      Check the build info here: {{ build.link }}
+  when:
+    status: [success, failure]
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
+
+---
+kind: pipeline
+name: "Pr"
+
+steps:
+- name: test
+  image: ruby:2.6.1
+  commands:
+  - gem update bundler
+  - bundle install
+  - bundle exec rspec
+
+- name: "Notify pr"
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_webhook
+    channel:
+      from_secret: slack_channel
+    template: >
+      {{#success build.status}}
+        [SUCCESS] Arke {{ build.branch }} branch by {{ build.author }} test have succeeded! :sunglasses:
+      {{else}}
+        [FAILURE] Branch {{ build.branch }} by {{ build.author }} tests have failed! :pepe:
+      {{/success}}
+      Check the build info here: {{ build.link }}
+  when:
+    status: [success, failure]
+
+trigger:
+  event:
+  - push
+  branch:
+    exclude:
+    - master
