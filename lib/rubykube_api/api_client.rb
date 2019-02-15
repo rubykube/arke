@@ -1,9 +1,11 @@
 require 'faraday'
 require 'openssl'
+require 'logger'
 
 module RubykubeApi
   class ApiClient
     def initialize(params)
+      @logger = Logger.new(STDOUT)
       @api_key = params['key']
       @secret = params['secret']
       @connection = Faraday.new("#{params['host']}/api/v2") do |faraday|
@@ -12,19 +14,27 @@ module RubykubeApi
     end
 
     def get(path, params = nil)
-      @connection.get do |req|
+      response = @connection.get do |req|
         req.headers = generate_headers
         req.url path
         req.body = params.to_json
       end
+
+      @logger.fatal(build_error(response)) if response.env.status != 200
+
+      response
     end
 
     def post(path, params = nil)
-      @connection.post do |req|
+      response = @connection.post do |req|
         req.headers = generate_headers
         req.url path
         req.body = params.to_json
       end
+
+      @logger.fatal(build_error(response)) if response.env.status != 201
+
+      response
     end
 
     private
@@ -38,5 +48,23 @@ module RubykubeApi
         'Content-Type' => 'application/json'
       }
     end
+
+    def build_error(response)
+      if valid_json?(response.body)
+        body = JSON.parse(response.body)
+      else
+        "Code: #{response.env.status} Message: #{response.env.reason_phrase}"
+      end
+    end
+
+    def valid_json?(json)
+      begin
+        JSON.parse(json)
+        true
+      rescue Exception => e
+        false
+      end
+    end
+
   end
 end
