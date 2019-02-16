@@ -2,8 +2,7 @@ module Arke
   module Command
     class Start < Clamp::Command
       def execute
-        strategy = Arke.config.strategy.new
-        strategy.start
+        Arke.config.strategy.start
       end
     end
   end

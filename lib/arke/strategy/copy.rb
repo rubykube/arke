@@ -1,4 +1,4 @@
-require 'exchange/bitfinex'
+require 'exchange'
 require 'rubykube/api_client'
 require 'rubykube/api/market_api'
 

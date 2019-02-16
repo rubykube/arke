@@ -19,14 +19,11 @@ module Arke
         'rubykube' => Rubykube::MarketApi,
       }
 
-      strategies = {
-        'copy' => Arke::Strategy::Copy,
-      }
-
       Arke.configure do |config|
+        config.strategy = Arke::Strategy.create(strategy)
+
         config.target = strategy['target']
         config.target['driver'] = drivers[config.target['driver']]
-        config.strategy = strategies[strategy['type']]
 
         config.sources = strategy['sources'].collect do |source|
           source['driver'] = drivers[source['driver']]

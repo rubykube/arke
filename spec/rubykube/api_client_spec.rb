@@ -9,7 +9,7 @@ RSpec.describe Rubykube::ApiClient do
   let(:key)    { SecureRandom.hex }
   let(:secret) { SecureRandom.hex }
 
-  let(:api_client) { Rubykube::ApiClient.new(host, key, secret) }
+  let(:api_client) { Rubykube::ApiClient.new({'host' => host, 'key' => key, 'secret' => secret}) }
 
   it 'sets proper header in get request' do
     api_client_get = api_client.get('/peatio/public/timestamp')
