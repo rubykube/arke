@@ -1,34 +1,37 @@
 ---
 kind: pipeline
-name: "master"
+name: "default"
 
 steps:
 - name: test
   image: ruby:2.6.1
   commands:
-  - gem update bundler
-  - bundle install
-  - bundle exec rspec
+    - gem update bundler
+    - bundle install
+    - bundle exec rspec
+  when:
+    event:
+      - push
+    branch:
+      exclude:
+        - master
 
 - name: "Bump and tag"
   image: ruby:2.6.1
   environment:
-    BOT_USERNAME: kite-bot
-    BOT_NAME: Kite Bot
-    BOT_EMAIL: kite-bot@heliostech.fr
     GITHUB_API_KEY:
       from_secret: kite_bot_key
   commands:
-  - gem install bump
-  - git config --global user.name "  Kite Bot"
-  - git config --global user.email "kite-bot@heliostech.fr"
-  - git remote add authenticated-origin https://kite-bot:$GITHUB_API_KEY@github.com/${DRONE_REPO}
-  - git fetch authenticated-origin
-  - bump patch --commit-message 'Bump [ci skip]'
-  - git tag $(cat VERSION)
-  - git push authenticated-origin master
-  - git push --tags authenticated-origin
-  - git describe --tags $(git rev-list --tags --max-count=1) > .tags
+    - gem install bump
+    - git config --global user.name "Kite Bot"
+    - git config --global user.email "kite-bot@heliostech.fr"
+    - git remote add authenticated-origin https://kite-bot:$GITHUB_API_KEY@github.com/${DRONE_REPO}
+    - git fetch authenticated-origin
+    - bump patch --commit-message 'Bump [ci skip]'
+    - git tag $(cat VERSION)
+    - git push authenticated-origin master
+    - git push --tags authenticated-origin
+    - git describe --tags $(git rev-list --tags --max-count=1) > .tags
   when:
     event:
       - push
@@ -45,9 +48,9 @@ steps:
     repo: rubykube/arke
   when:
     event:
-    - push
+      - push
     branch:
-    - master
+      - master
 
 - name: "Notify in slack"
   image: plugins/slack
@@ -58,15 +61,13 @@ steps:
       from_secret: slack_channel
     template: >
       {{#success build.status}}
-        [SUCCESS] Arke {{ build.branch }} branch build by {{ build.author }} has succeeded! :sunglasses:
+        [SUCCESS] Branch {{ build.branch }} by {{ build.author }} succeeded!
       {{else}}
-        [FAILURE] Branch {{ build.branch }} by {{ build.author }} has failed! :pepe:
+        [FAILURE] Branch {{ build.branch }} by {{ build.author }} failed!
       {{/success}}
       Check the build info here: {{ build.link }}
   when:
     status: [success, failure]
-
-trigger:
-  event:
-  - push
+    event:
+      - push
 
