@@ -1,0 +1,14 @@
+strategy:
+  type: 'copy'
+  target:
+    driver: rubykube
+    host: "http://www.devkube.com"
+    name: John
+    key: ""
+    secret: ""
+  sources:
+    - driver: bitfinex
+      host: ""
+      name: Joe
+      key: ""
+      secret: ""

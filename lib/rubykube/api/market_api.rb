@@ -1,6 +1,6 @@
 module Rubykube
   class MarketApi < ApiClient
-    def initialize(host, api_key, secret)
+    def initialize(params)
       super
     end
 
