@@ -1,12 +1,21 @@
 module Arke
-  PropertyNotSetError = Class.new(StandardError)
+  module Configuration
+    PropertyNotSetError = Class.new(StandardError)
 
-  class << self
-    attr_accessor :config
-  end
+    class << self
+      def define
+        @config ||= OpenStruct.new
+        yield(@config)
+      end
 
-  def self.configure
-    self.config ||= OpenStruct.new
-    yield(config)
+      def get(key)
+        @config ||= OpenStruct.new
+        @config[key]
+      end
+
+      def require!(key)
+        get(key) || (raise PropertyNotSetError.new)
+      end
+    end
   end
 end

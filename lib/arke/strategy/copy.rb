@@ -5,9 +5,10 @@ require 'rubykube/api/market_api'
 module Arke::Strategy
   class Copy
     def start
-      market_api = Arke.config.target['driver'].new(Arke.config.target)
+      target = Arke::Configuration.require!(:target)
+      market_api = target['driver'].new(target)
 
-      Arke.config.sources.each do |source|
+      Arke::Configuration.get(:sources).each do |source|
         EM.run do
 
           exchange = source['driver'].new

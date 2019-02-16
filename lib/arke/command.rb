@@ -19,7 +19,7 @@ module Arke
         'rubykube' => Rubykube::MarketApi,
       }
 
-      Arke.configure do |config|
+      Arke::Configuration.define do |config|
         config.strategy = Arke::Strategy.create(strategy)
 
         config.target = strategy['target']
