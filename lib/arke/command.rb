@@ -12,10 +12,27 @@ module Arke
     module_function :run!
 
     def load_configuration
-      configs = YAML.load(File.open('config/variables.yaml'))
+      strategy = YAML.load_file('config/strategy.yaml')['strategy']
+
+      drivers = {
+        'bitfinex' => Arke::Exchange::Bitfinex,
+        'rubykube' => Rubykube::MarketApi,
+      }
+
+      strategies = {
+        'copy' => Arke::Strategy::Copy,
+      }
+
       Arke.configure do |config|
-        config.host = configs['host']
-        config.api_key = configs['api_key']
+        config.target = strategy['target']
+        config.target['driver'] = drivers[config.target['driver']]
+        config.strategy = strategies[strategy['type']]
+
+        config.sources = strategy['sources'].collect do |source|
+          source['driver'] = drivers[source['driver']]
+
+          source
+        end
       end
     end
     module_function :load_configuration
