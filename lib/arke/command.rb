@@ -20,8 +20,8 @@ module Arke
       }
 
       Arke::Configuration.define do |config|
+        config.pair = strategy['pair']
         config.strategy = Arke::Strategy.create(strategy)
-
         config.target = strategy['target']
         config.target['driver'] = drivers[config.target['driver']]
 
