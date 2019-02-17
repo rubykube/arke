@@ -14,19 +14,14 @@ module Arke
     def load_configuration
       strategy = YAML.load_file('config/strategy.yaml')['strategy']
 
-      drivers = {
-        'bitfinex' => Arke::Exchange::Bitfinex,
-        'rubykube' => Rubykube::MarketApi,
-      }
-
       Arke::Configuration.define do |config|
         config.pair = strategy['pair']
-        config.strategy = Arke::Strategy.create(strategy)
         config.target = strategy['target']
-        config.target['driver'] = drivers[config.target['driver']]
+        config.target['driver'] = Arke::Exchange.exchange_class(config.target['driver'])
+        config.strategy = Arke::Strategy.create(strategy)
 
         config.sources = strategy['sources'].collect do |source|
-          source['driver'] = drivers[source['driver']]
+          source['driver'] = Arke::Exchange.exchange_class(source['driver'])
 
           source
         end

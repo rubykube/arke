@@ -1,4 +1,4 @@
-module Rubykube
+module RubykubeApi
   class MarketApi < ApiClient
     def initialize(params)
       super

@@ -1,16 +1,13 @@
 require 'exchange'
-require 'rubykube/api_client'
-require 'rubykube/api/market_api'
 
 module Arke::Strategy
   class Copy
+    attr_reader :pair, :target
+
     def initialize
+      @target = Arke::Configuration.require!(:target)
       @pair = Arke::Configuration.require!(:pair)
       @orderbook = Arke::Orderbook.new(@pair)
-    end
-
-    def pair
-      @pair
     end
 
     def on_order_create(order)
@@ -22,8 +19,7 @@ module Arke::Strategy
     end
 
     def start
-      target = Arke::Configuration.require!(:target)
-      market_api = target['driver'].new(target)
+      target_exchange = @target['driver'].new(self)
 
       Arke::Configuration.get(:sources).each do |source|
         EM.run do
@@ -36,7 +32,7 @@ module Arke::Strategy
             else
               exchange.logger.info("Order: #{order}")
               sleep(0.5)
-              market_api.create_order(order)
+              target_exchange.create_order(order)
               @orderbook.remove(order.id)
               EM.next_tick { @orderbook.orders_queue.pop(&process_orders) }
             end

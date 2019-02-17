@@ -1,7 +1,7 @@
 require 'faraday'
 require 'openssl'
 
-module Rubykube
+module RubykubeApi
   class ApiClient
     def initialize(params)
       @api_key = params['key']
