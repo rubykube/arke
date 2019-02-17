@@ -1,15 +1,15 @@
 require 'spec_helper'
 require 'securerandom'
 
-require './lib/rubykube/api_client'
+require './lib/rubykube_api/api_client'
 
-RSpec.describe Rubykube::ApiClient do
+RSpec.describe RubykubeApi::ApiClient do
 
   let(:host)   { 'http://www.devkube.com/' }
   let(:key)    { SecureRandom.hex }
   let(:secret) { SecureRandom.hex }
 
-  let(:api_client) { Rubykube::ApiClient.new({'host' => host, 'key' => key, 'secret' => secret}) }
+  let(:api_client) { RubykubeApi::ApiClient.new({'host' => host, 'key' => key, 'secret' => secret}) }
 
   it 'sets proper header in get request' do
     api_client_get = api_client.get('/peatio/public/timestamp')

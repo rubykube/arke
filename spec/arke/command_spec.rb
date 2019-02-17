@@ -5,7 +5,7 @@ RSpec.describe Arke::Command do
   let(:config) { YAML.load_file('config/strategy.yaml')['strategy'] }
   let(:target) {
     t = config['target']
-    t['driver'] = Rubykube::MarketApi
+    t['driver'] = Arke::Exchange::Rubykube
     t
   }
   let(:strategy_type) { Arke::Strategy::Copy }
