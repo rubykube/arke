@@ -13,11 +13,10 @@ require_relative '../orderbook'
 
 module Arke::Exchange
   class Bitfinex
-
-    def initialize
-      @log = Logger.new(STDOUT)
-      @url = "wss://api.bitfinex.com/ws/2"
-      @map = {}
+    def initialize(strategy)
+      @log = Logger.new($stdout)
+      @url = 'wss://api.bitfinex.com/ws/2'
+      @strategy = strategy
     end
 
     def process_message(msg)
@@ -29,24 +28,23 @@ module Arke::Exchange
     end
 
     def process_channel_message(msg)
-      book = @map[msg[0]][:book]
       data = msg[1]
+
       if data.length == 3
-        update_order(book, data)
+        update_order(data)
       elsif data.length > 3
-        data.each { |order|
-          update_order(book, order)
-        }
+        data.each { |order| update_order(order) }
       end
-      @book = book
     end
 
-    def update_order(book, data)
+    def update_order(data)
       id, price, amount = data
-      if price == 0
-        book.remove(id)
+      order = Arke::Order.new(id, @strategy.pair, price, amount)
+
+      if price.zero?
+        @strategy.on_order_stop(order)
       else
-        book.add(Arke::Order.new(id, 'ETHUSD', price, amount))
+        @strategy.on_order_create(order)
       end
     end
 
@@ -64,10 +62,10 @@ module Arke::Exchange
     end
 
     def handle_subscribed_event(msg)
-      @map[msg['chanId']] = {
-        info: msg,
-        book: Arke::Orderbook.new(msg['pair'])
-      }
+      # @map[msg['chanId']] = {
+        # info: msg,
+        # book: Arke::Orderbook.new(msg['pair'])
+      # }
     end
 
     def on_open(e)
@@ -75,7 +73,7 @@ module Arke::Exchange
       sub = {
         event: "subscribe",
         channel: "book",
-        pair: "ETHUSD",
+        pair: @strategy.pair,
         prec: "R0"
       }
 
@@ -116,10 +114,6 @@ module Arke::Exchange
 
     def logger
       @log
-    end
-
-    def orderbook
-      @book
     end
   end
 end
