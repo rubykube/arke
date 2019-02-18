@@ -4,9 +4,10 @@ require 'securerandom'
 require './lib/rubykube_api/api_client'
 
 RSpec.describe RubykubeApi::ApiClient do
+  include_context 'mocked rubykube'
 
   let(:host)   { 'http://www.devkube.com/' }
-  let(:key)    { SecureRandom.hex }
+  let(:key)    { @authorized_api_key }
   let(:secret) { SecureRandom.hex }
 
   let(:api_client) { RubykubeApi::ApiClient.new({'host' => host, 'key' => key, 'secret' => secret}) }
