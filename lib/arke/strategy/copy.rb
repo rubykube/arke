@@ -33,7 +33,7 @@ module Arke::Strategy
           if @orderbook.nil? || @orderbook.empty? || order.nil?
             EM.add_timer(1) { @orderbook.orders_queue.pop(&process_orders) }
           else
-            target_exchange.logger.info("Order: #{order}")
+            Arke::Log.info("Order: #{order}")
             sleep(0.5)
             target_exchange.create_order(order)
             @orderbook.remove(order.id)

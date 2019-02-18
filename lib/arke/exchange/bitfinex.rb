@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require 'pp'
-require 'logger'
 require 'faye/websocket'
 require 'eventmachine'
 require 'json'
@@ -13,10 +12,8 @@ require_relative '../orderbook'
 
 module Arke::Exchange
   class Bitfinex
-    attr_reader :logger
 
     def initialize(strategy)
-      @logger = Logger.new($stdout)
       @url = 'wss://api.bitfinex.com/ws/2'
       @strategy = strategy
     end
@@ -59,7 +56,7 @@ module Arke::Exchange
       when 'info'
       when 'conf'
       when 'error'
-        @logger.info "Event: #{msg['event']} ignored"
+        Arke::Log.info "Event: #{msg['event']} ignored"
       end
     end
 
@@ -71,7 +68,7 @@ module Arke::Exchange
     end
 
     def on_open(e)
-      @logger.info 'Open event'
+      Arke::Log.info 'Open event'
       sub = {
         event: "subscribe",
         channel: "book",
@@ -85,13 +82,12 @@ module Arke::Exchange
     end
 
     def on_message(e)
-      # @log.info "Message: #{e.data}"
       msg = JSON.parse(e.data)
       process_message(msg)
     end
 
     def on_close(e)
-      @logger.info "Closing code: #{e.code} Reason: #{e.reason}"
+      Arke::Log.info "Closing code: #{e.code} Reason: #{e.reason}"
     end
 
     def start
