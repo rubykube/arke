@@ -21,28 +21,30 @@ module Arke::Strategy
     def start
       target_exchange = @target['driver'].new(self)
 
-      Arke::Configuration.get(:sources).each do |source|
-        EM.run do
-          exchange = source['driver'].new(self)
-          exchange.start
-
-          process_orders = proc do |order|
-            if @orderbook.nil? || @orderbook.empty? || order.nil?
-              EM.add_timer(1) { @orderbook.orders_queue.pop(&process_orders) }
-            else
-              exchange.logger.info("Order: #{order}")
-              sleep(0.5)
-              target_exchange.create_order(order)
-              @orderbook.remove(order.id)
-              EM.next_tick { @orderbook.orders_queue.pop(&process_orders) }
-            end
+      EM.run do
+        Arke::Configuration.get(:sources).each do |source|
+          EM.run do
+            exchange = source['driver'].new(self)
+            exchange.start
           end
-
-          EM.add_timer(3) { @orderbook.orders_queue.pop(&process_orders) }
-
-          trap('INT') { EM.stop }
-          trap('TERM') { EM.stop }
         end
+
+        process_orders = proc do |order|
+          if @orderbook.nil? || @orderbook.empty? || order.nil?
+            EM.add_timer(1) { @orderbook.orders_queue.pop(&process_orders) }
+          else
+            target_exchange.logger.info("Order: #{order}")
+            sleep(0.5)
+            target_exchange.create_order(order)
+            @orderbook.remove(order.id)
+            EM.next_tick { @orderbook.orders_queue.pop(&process_orders) }
+          end
+        end
+
+        EM.add_timer(3) { @orderbook.orders_queue.pop(&process_orders) }
+
+        trap('INT') { EM.stop }
+        trap('TERM') { EM.stop }
       end
     end
   end
