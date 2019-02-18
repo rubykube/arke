@@ -23,36 +23,55 @@ Now you can run Arke using `bin/arke` command.
 
 ### Example usage
 
-Add platform host and credentials to `config/variables.yaml`
+Arke is a liquidity aggregation tool which supports copy strategy
+
+![ArkeStructure](/home/den/work/rubykube/arke/.assets/ArkeStructure.jpg)Add platform host and credentials to `config/strategy.yaml`
 
 ```yaml
-host: "http://www.devkube.com"
-api_key:
-  key: 'xxxxxxxxxxxxx'
-  secret: 'xxxxxxxxxxxxxxxxxxxxxxx'
+strategy:
+  type: 'copy'
+  pair: 'ETHUSD'
+  target:
+    driver: rubykube
+    host: "http://www.example1.com"
+    name: John
+    key: "xxxxxxxxxx"
+    secret: "xxxxxxxxxx"
+  sources:
+    - driver: source1
+      host: "http://www.example2.com"
+      name: Joe
+      key: "xxxxxxxxxxx"
+      secret: "xxxxxxxxxxxx"
+    - driver: source2
+      host: "http://www.example2.com"
+      name: Joe
+      key: "xxxxxxxxxxx"
+      secret: "xxxxxxxxxxxx"
 ```
 
 To open development console, use `bin/arke console`
 
 Now your configuration variables can be reached with
 ```ruby
-Arke.configuration.variable_name
+Arke::Configuration.get(:variable_name)
+# or
+Arke::Configuration.require!(:variable_name)
 
-# For example, to get host:
-
-Arke.configuration.host
+# For example, to get target host:
+Arke::Configuration.require!(:target)['host']
 
 #For api key:
-Arke.configuration.api_key['key'] # for key
-Arke.configuration.api_key['secret'] # for secret
+Arke::Configuration.require!(:target)['key']
+Arke::Configuration.require!(:target)['secret']
 ```
-And then, to use market api
+To use market API:
 
 ```ruby
 market_api = Rubykube::MarketApi.new(
-  Arke.configuration.host,
-  Arke.configuration.api_key['key'],
-  Arke.configuration.api_key['secret']
+    Arke::Configuration.require!(:target)['host'],
+    Arke::Configuration.require!(:target)['key'],
+	Arke::Configuration.require!(:target)['secret']
 )
 
 market_api.create_order(order_attrs) # order_attrs - ruby hash with request parameters
