@@ -13,8 +13,10 @@ require_relative '../orderbook'
 
 module Arke::Exchange
   class Bitfinex
+    attr_reader :logger
+
     def initialize(strategy)
-      @log = Logger.new($stdout)
+      @logger = Logger.new($stdout)
       @url = 'wss://api.bitfinex.com/ws/2'
       @strategy = strategy
     end
@@ -57,7 +59,7 @@ module Arke::Exchange
       when 'info'
       when 'conf'
       when 'error'
-        @log.info "Event: #{msg['event']} ignored"
+        @logger.info "Event: #{msg['event']} ignored"
       end
     end
 
@@ -69,7 +71,7 @@ module Arke::Exchange
     end
 
     def on_open(e)
-      @log.info 'Open event'
+      @logger.info 'Open event'
       sub = {
         event: "subscribe",
         channel: "book",
@@ -89,7 +91,7 @@ module Arke::Exchange
     end
 
     def on_close(e)
-      @log.info "Closing code: #{e.code} Reason: #{e.reason}"
+      @logger.info "Closing code: #{e.code} Reason: #{e.reason}"
     end
 
     def start
@@ -110,10 +112,6 @@ module Arke::Exchange
 
     def print
       @map.each { |item| pp item }
-    end
-
-    def logger
-      @log
     end
   end
 end
