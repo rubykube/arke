@@ -11,6 +11,7 @@ RSpec.describe RubykubeApi::ApiClient do
   let(:secret) { SecureRandom.hex }
 
   let(:api_client) { RubykubeApi::ApiClient.new({'host' => host, 'key' => key, 'secret' => secret}) }
+  let(:api_client_wrong) { RubykubeApi::ApiClient.new({'host' => host, 'key' => SecureRandom.hex, 'secret' => secret}) }
 
   it 'sets proper header in get request' do
     api_client_get = api_client.get('/peatio/public/timestamp')
@@ -23,7 +24,10 @@ RSpec.describe RubykubeApi::ApiClient do
     api_client_get = api_client.get('/peatio/public/timestamp')
 
     expect(api_client_get.env.status).to eq(200)
-    expect(api_client_get.env.reason_phrase).to eq('OK')
+  end
+
+  it 'gets 403 on get request with wrong api key' do
+    expect { api_client_wrong.get('/peatio/public/timestamp') }.to output(/Code: 403/).to_stderr_from_any_process
   end
 
   it 'sets proper header in post request' do
