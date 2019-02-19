@@ -28,5 +28,19 @@ shared_context 'mocked rubykube' do
       }).
     to_return(status: 201, body: '', headers: {})
 
+    stub_request(:post, /peatio\/market\/orders/).
+    with(
+      headers: {
+        'X-Auth-Apikey'=> @authorized_api_key
+      }).
+    to_return(status: 201, body: '', headers: {})
+
+    stub_request(:post, /peatio\/market\/orders\/\d+\/cancel/).
+    with(
+      headers: {
+        'X-Auth-Apikey'=> @authorized_api_key
+      }).
+    to_return(status: 201, body: '', headers: {})
+
   end
 end

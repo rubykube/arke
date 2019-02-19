@@ -16,6 +16,12 @@ module RubykubeApi
       )
     end
 
+    def cancel_order(id)
+      post(
+        "peatio/market/orders/#{id}/cancel"
+      )
+    end
+
     private
 
     def get(path, params = nil)
