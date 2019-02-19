@@ -17,6 +17,8 @@
 $LOAD_PATH << File.expand_path('../lib', __dir__)
 $LOAD_PATH << File.expand_path('../lib/arke', __dir__)
 
+Dir['./spec/support/**/*.rb'].each { |f| require f }
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
