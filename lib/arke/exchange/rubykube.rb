@@ -9,7 +9,15 @@ module Arke::Exchange
     end
 
     def create_order(order)
+      puts "Sending #{order}"
       @market_api.create_order(order)
+    end
+
+    def tick
+      @strategy.query do |order|
+        create_order(order)
+        tick
+      end
     end
   end
 end

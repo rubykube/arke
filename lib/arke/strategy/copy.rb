@@ -2,12 +2,18 @@ require 'exchange'
 
 module Arke::Strategy
   class Copy
-    attr_reader :pair, :target
+    attr_reader :pair, :target, :orderbook
 
     def initialize
       @target = Arke::Configuration.require!(:target)
       @pair = Arke::Configuration.require!(:pair)
       @orderbook = Arke::Orderbook.new(@pair)
+    end
+
+    def query(&callback)
+      @orderbook.query do |order|
+        yield order
+      end
     end
 
     def on_order_create(order)
@@ -29,19 +35,9 @@ module Arke::Strategy
           end
         end
 
-        process_orders = proc do |order|
-          if @orderbook.nil? || @orderbook.empty? || order.nil?
-            EM.add_timer(1) { @orderbook.orders_queue.pop(&process_orders) }
-          else
-            Arke::Log.info("Order: #{order}")
-            sleep(0.5)
-            target_exchange.create_order(order)
-            @orderbook.remove(order.id)
-            EM.next_tick { @orderbook.orders_queue.pop(&process_orders) }
-          end
+        EM.run do
+          target_exchange.tick
         end
-
-        EM.add_timer(3) { @orderbook.orders_queue.pop(&process_orders) }
 
         trap('INT') { EM.stop }
         trap('TERM') { EM.stop }

@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'rbtree'
+
 require_relative 'price_level'
 
 module Arke
@@ -15,6 +16,12 @@ module Arke
         sell: ::RBTree.new,
         buy: ::RBTree.new
       }
+    end
+
+    def query(&callback)
+      @orders_queue.pop do |order|
+        yield order
+      end
     end
 
     def empty?
