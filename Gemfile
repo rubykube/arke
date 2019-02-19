@@ -13,6 +13,7 @@ gem 'eventmachine'
 gem 'typhoeus', '>= 1.0.1'
 gem 'json', '~> 2.1'
 gem 'pry'
+gem 'redis'
 
 gem 'rbtree', '~> 0.4'
 gem 'rspec', '~> 3.0'

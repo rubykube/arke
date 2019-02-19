@@ -4,7 +4,7 @@
 module Arke
   class Order
 
-    attr :id, :market, :price, :amount, :side
+    attr :id, :market, :price, :amount, :side, :state
 
     def initialize(id, market, price, amount)
       @id = id
@@ -12,6 +12,7 @@ module Arke
       @price = price
       @amount = amount
       @side = :buy
+      @state = :new
       if amount < 0
         @amount = amount * -1
         @side = :sell
@@ -20,6 +21,10 @@ module Arke
 
     def to_s
       "#{@market}: #{@side} #{@price} x #{@amount}"
+    end
+
+    def to_json
+      [@id, @market, @price, @amount, @side, @state].to_json
     end
 
   end
