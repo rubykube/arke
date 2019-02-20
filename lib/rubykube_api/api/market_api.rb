@@ -5,15 +5,17 @@ module RubykubeApi
     end
 
     def create_order(order)
-      post(
-        'peatio/market/orders',
-        {
-          market: order.market.downcase,
-          side:   order.side.to_s,
-          volume: order.amount,
-          price:  order.price
-        }
-      )
+      Arke::Performance.elapse(:create_order) do
+        post(
+          'peatio/market/orders',
+          {
+            market: order.market.downcase,
+            side:   order.side.to_s,
+            volume: order.amount,
+            price:  order.price
+          }
+        )
+      end
     end
 
     private
