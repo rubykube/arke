@@ -1,3 +1,5 @@
+require 'rubykube_api'
+
 module RubykubeApi
   class MarketApi < ApiClient
     def initialize(params)
@@ -13,6 +15,12 @@ module RubykubeApi
           volume: order.amount,
           price:  order.price
         }
+      )
+    end
+
+    def cancel_order(order)
+      post(
+        "peatio/market/orders/#{order.id}/cancel"
       )
     end
 

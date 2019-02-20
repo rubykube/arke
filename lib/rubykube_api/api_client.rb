@@ -1,5 +1,6 @@
 require 'faraday'
 require 'openssl'
+require 'json'
 
 module RubykubeApi
   class ApiClient
