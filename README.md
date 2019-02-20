@@ -25,7 +25,7 @@ Now you can run Arke using `bin/arke` command.
 
 Arke is a liquidity aggregation tool which supports copy strategy
 
-![ArkeStructure](/home/den/work/rubykube/arke/.assets/ArkeStructure.jpg)Add platform host and credentials to `config/strategy.yaml`
+![ArkeStructure](.assets/ArkeStructure.jpg)Add platform host and credentials to `config/strategy.yaml`
 
 ```yaml
 strategy:
