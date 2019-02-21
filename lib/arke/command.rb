@@ -14,6 +14,14 @@ module Arke
     module_function :run!
 
     def load_configuration
+      strategy = YAML.load_file('config/strategy.yaml')['strategy']
+
+      Arke::Configuration.define do |config|
+        config.min_update_period = strategy['min_update_period']
+        config.strategy = strategy
+        config.target = strategy['target']
+        config.sources = strategy['sources']
+      end
     end
     module_function :load_configuration
 
