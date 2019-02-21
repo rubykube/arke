@@ -2,8 +2,13 @@ require 'exchange'
 
 module Arke::Strategy
   class Base
+    RunNotOverriden = Class.new(StandardError)
+
     def initialize
       @shutdown = false
+      # we limit strategy update rate here (seconds)
+      # easy to change if we will implement some stress-testing strategies
+      @minimum_update_period = Arke::Configuration.get(:min_update_period) || 1.0
     end
 
     def start
@@ -20,12 +25,21 @@ module Arke::Strategy
 
       on_start
 
-      until @shutdown do
-        run
-      end
+      run_loop
 
       @threads.each { |thread| thread.join }
       on_exit
+    end
+
+    def run_loop
+      until @shutdown do
+        timestamp = Time.now
+
+        run
+
+        delta = @minimum_update_period - (Time.now - timestamp)
+        sleep(delta) if delta > 0
+      end
     end
 
     def stop
@@ -42,6 +56,7 @@ module Arke::Strategy
     end
 
     def run
+      raise RunNotOverriden.new
     end
 
     def on_stop

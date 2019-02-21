@@ -17,6 +17,7 @@ module Arke
       strategy = YAML.load_file('config/strategy.yaml')['strategy']
 
       Arke::Configuration.define do |config|
+        config.min_update_period = strategy['min_update_period']
         config.strategy = strategy
         config.target = strategy['target']
         config.sources = strategy['sources']

@@ -1,5 +1,7 @@
 module Arke::Exchange
   class Base
+    RunNotOverriden = Class.new(StandardError)
+
     def initialize(strategy)
       @strategy = strategy
     end
@@ -16,6 +18,7 @@ module Arke::Exchange
 
     # methods to override
     def run
+      raise RunNotOverriden.new
     end
 
     def on_start
