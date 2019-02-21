@@ -14,6 +14,9 @@ module Arke::Exchange
       end
 
       on_stop
+    rescue StandardError => e
+      Arke::Log.fatal e
+      exit
     end
 
     # methods to override

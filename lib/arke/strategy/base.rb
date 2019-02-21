@@ -26,9 +26,9 @@ module Arke::Strategy
       on_start
 
       run_loop
-
-      @threads.each { |thread| thread.join }
-      on_exit
+    rescue StandardError => e
+      Arke::Log.fatal e
+      exit
     end
 
     def run_loop
@@ -45,6 +45,9 @@ module Arke::Strategy
     def stop
       on_stop
       @shutdown = true
+
+      @threads.each { |thread| thread.join }
+      on_exit
     end
 
     def shutdown?
