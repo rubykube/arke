@@ -1,8 +1,10 @@
-require 'strategy/base'
-require 'strategy/copy'
+# frozen_string_literal: true
 
 module Arke
   module Strategy
+    require 'strategy/base'
+    require 'strategy/copy'
+
     def self.create(type)
       strategy_class(type).new
     end

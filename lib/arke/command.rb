@@ -3,6 +3,7 @@ require 'command/root'
 require 'configuration'
 require 'log'
 require 'yaml'
+require 'arke'
 
 module Arke
   module Command

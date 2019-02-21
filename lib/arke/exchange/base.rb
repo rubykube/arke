@@ -1,17 +1,23 @@
+# frozen_string_literal: true
+
 module Arke::Exchange
   class Base
-    RunNotOverriden = Class.new(StandardError)
+    attr_accessor :action_queue
+
+    class RunNotOverriden < StandardError; end
+    class UnknownActionError < StandardError; end
+
+    ACTIONS = %i[create update cancel].freeze
 
     def initialize(strategy)
       @strategy = strategy
+      @action_queue = Queue.new
     end
 
     def start
       on_start
 
-      until @strategy.shutdown?
-        run
-      end
+      run until @strategy.shutdown?
 
       on_stop
     rescue StandardError => e
@@ -21,13 +27,18 @@ module Arke::Exchange
 
     # methods to override
     def run
-      raise RunNotOverriden.new
+      Thread.new do
+        yield
+      end
     end
 
-    def on_start
+    def add_action(type, data)
+      raise UnknownActionError unless ACTIONS.include? type
+      @action_queue << { type: data }
     end
 
-    def on_stop
-    end
+    def on_start; end
+
+    def on_stop; end
   end
 end
