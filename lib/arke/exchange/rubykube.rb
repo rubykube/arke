@@ -1,4 +1,4 @@
 module Arke::Exchange
-  class Rubykube
+  class Rubykube < Base
   end
 end

@@ -8,7 +8,6 @@ ruby '2.6.1'
 gem 'clamp'
 gem 'faraday'
 gem 'faye-websocket'
-gem 'eventmachine'
 gem 'json'
 
 gem 'pry'

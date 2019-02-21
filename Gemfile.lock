@@ -49,7 +49,6 @@ PLATFORMS
 
 DEPENDENCIES
   clamp
-  eventmachine
   faraday
   faye-websocket
   json

@@ -1,5 +1,5 @@
 strategy:
-  type: 'copy'
+  type: copy
   pair: 'ETHUSD'
   target:
     driver: rubykube

@@ -1,4 +1,4 @@
 module Arke::Strategy
-  class Copy
+  class Copy < Base
   end
 end
