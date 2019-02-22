@@ -9,7 +9,7 @@ shared_context 'mocked rubykube' do
 
     # non-authorized requests
 
-    stub_request(:get, /peatio\/public\/timestamp/).
+    stub_request(:post, /peatio\/market\/orders/).
     to_return(status: 403, body: '', headers: {})
 
     # authorized requests
