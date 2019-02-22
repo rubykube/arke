@@ -1,13 +1,13 @@
 strategy:
   type: copy
   pair: 'ETHUSD'
-  min_update_period: 1.0
   target:
     driver: rubykube
     host: "http://www.devkube.com"
     name: John
     key: ""
     secret: ""
+    api_rate_limit: 1.0
   sources:
     - driver: bitfinex
       host: ""

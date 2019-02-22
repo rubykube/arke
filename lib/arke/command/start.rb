@@ -3,7 +3,8 @@ module Arke
     class Start < Clamp::Command
       def execute
         config = Arke::Configuration.require!(:strategy)
-        Arke::Strategy.create(config['type']).start
+        manager = Arke::Manager.new
+        manager.bootstrap(config)
       end
     end
   end

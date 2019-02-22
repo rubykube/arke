@@ -4,18 +4,21 @@ require 'json'
 
 module Arke::Exchange
   class Rubykube < Base
-    def initialize(strategy)
+    def initialize(config, strategy)
       super
 
-      @configs = Arke::Configuration.require!(:target)
-      @api_key = @configs['key']
-      @secret = @configs['secret']
-      @connection = Faraday.new("#{@configs['host']}/api/v2") do |faraday|
+      @api_key = config['key']
+      @secret = config['secret']
+      @connection = Faraday.new("#{config['host']}/api/v2") do |faraday|
         faraday.adapter Faraday.default_adapter
       end
     end
 
     def call(action)
+      pp 'Rubykube processes action'
+      puts action.inspect
+      puts
+
       if action.type == :create_order
         create_order(action.params)
       elsif action.type == :cancel_order
@@ -67,7 +70,7 @@ module Arke::Exchange
 
     def build_error(response)
       if valid_json?(response.body)
-        body = JSON.parse(response.body)
+        JSON.parse(response.body)
       else
         "Code: #{response.env.status} Message: #{response.env.reason_phrase}"
       end
@@ -77,7 +80,8 @@ module Arke::Exchange
       begin
         JSON.parse(json)
         true
-      rescue Exception => e
+      rescue StandardError => e
+        puts e.message
         false
       end
     end

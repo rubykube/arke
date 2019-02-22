@@ -4,12 +4,12 @@ require 'exchange/rubykube'
 
 module Arke
   module Exchange
-    def self.create(type, strategy)
-      exchange_class(type).new(strategy)
+    def self.create(config, strategy)
+      exchange_class(config['driver']).new(config, strategy)
     end
 
-    def self.exchange_class(type)
-      Arke::Exchange.const_get(type.capitalize)
+    def self.exchange_class(driver)
+      Arke::Exchange.const_get(driver.capitalize)
     end
   end
 end

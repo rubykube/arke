@@ -3,8 +3,8 @@ require 'strategy/copy'
 
 module Arke
   module Strategy
-    def self.create(type)
-      strategy_class(type).new
+    def self.create(config)
+      strategy_class(config['type']).new(config)
     end
 
     def self.strategy_class(type)
