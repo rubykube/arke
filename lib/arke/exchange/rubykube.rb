@@ -15,10 +15,12 @@ module Arke::Exchange
     end
 
     def call(action)
-      pp 'Rubykube processes action'
-      puts action.inspect
-      puts
+      Arke::Log.debug 'Rubykube processes action'
+      Arke::Log.debug action.inspect
 
+      # we can put some metaprogramming here
+      # like method(action.type).call(action.params)
+      # define method and avoid if if if if
       if action.type == :create_order
         create_order(action.params)
       elsif action.type == :cancel_order

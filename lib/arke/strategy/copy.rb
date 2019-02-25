@@ -6,7 +6,8 @@ module Arke::Strategy
 
     def call
       # So, here we need access to workers, at least to target worker
-      puts 'Copy startegy called'
+      Arke::Log.debug 'Copy startegy called'
+      puts
       action = Arke::Action.new(:echo_action, { 'hello' => 'world' })
       @target.send_action(action)
     end

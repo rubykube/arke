@@ -1,5 +1,7 @@
 require_relative 'worker'
+require_relative 'websocket'
 require 'action'
+require 'log'
 
 module Arke
   class Manager
@@ -24,7 +26,19 @@ module Arke
       target_worker = Arke::Worker.new(target)
       @workers.push(target_worker)
 
+      # we need to share target worker with strategy as well
       @strategy.set_target_worker(target_worker)
+
+      ####### WIP separate worker for websocket
+      @websocket = Arke::Websocket.new(@workers.first)
+      # in future we can subscribe worker, if we have
+      # weboscket:
+      #    url: ...
+      # in config
+      # @websocket.subscribe
+
+      Thread.new { @websocket.run }
+      ################
 
       run
     end
@@ -45,6 +59,9 @@ module Arke
     end
 
     def stop
+      # Logger cannot be called here :(
+      puts
+      puts
       puts 'Shutting down'
       shutdown_action = Arke::Action.new(:shutdown, nil)
       @shutdown = true

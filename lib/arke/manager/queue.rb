@@ -1,3 +1,6 @@
+# duplicates standard Queue, if we will not add custom logic here,
+# can be deleted
+
 module Arke
   class ActionQueue
     def initialize
