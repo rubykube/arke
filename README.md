@@ -65,17 +65,6 @@ Arke::Configuration.require!(:target)['host']
 Arke::Configuration.require!(:target)['key']
 Arke::Configuration.require!(:target)['secret']
 ```
-To use market API:
-
-```ruby
-market_api = Rubykube::MarketApi.new(
-    Arke::Configuration.require!(:target)['host'],
-    Arke::Configuration.require!(:target)['key'],
-	Arke::Configuration.require!(:target)['secret']
-)
-
-market_api.create_order(order_attrs) # order_attrs - ruby hash with request parameters
-```
 
 To start trading bot type
 
