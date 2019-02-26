@@ -4,8 +4,7 @@ module Arke::Exchange
       # we can use separate websocket worker as event emitter
       # it solves a problem with queue.pop, websocket will push messages
       # exchange handles parsing and subscription logic
-      Arke::Log.debug 'Bitfinex processes action'
-      Arke::Log.debug action.inspect
+      Arke::Log.debug "Bitfinex processes action #{action}"
 
       if action.type == :websocket
         # parsing and sending to strategy

@@ -7,7 +7,7 @@ module Arke
       @params = params
     end
 
-    def inspect
+    def to_s
       "#Type: #{@type}, params: #{@params}"
     end
   end
