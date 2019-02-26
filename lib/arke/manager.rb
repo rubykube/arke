@@ -48,7 +48,11 @@ module Arke
 
       #@workers.each(&:run)
 
-      until @shutdown do
+      loop do
+        if @shutdown
+          Arke::Log.debug 'Stopping Strategy'
+          break
+        end
         timestamp = Time.now
 
         @strategy.call
@@ -59,10 +63,6 @@ module Arke
     end
 
     def stop
-      # Logger cannot be called here :(
-      puts
-      puts
-      puts 'Shutting down'
       shutdown_action = Arke::Action.new(:shutdown, nil)
       @shutdown = true
       @workers.each do |worker|

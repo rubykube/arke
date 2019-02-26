@@ -15,8 +15,7 @@ module Arke::Exchange
     end
 
     def call(action)
-      Arke::Log.debug 'Rubykube processes action'
-      Arke::Log.debug action.inspect
+      Arke::Log.debug "Rubykube processes action #{action}"
 
       if action.type == :create_order
         create_order(action.params)
@@ -80,7 +79,7 @@ module Arke::Exchange
         JSON.parse(json)
         true
       rescue StandardError => e
-        puts e.message
+        Arke::Log.error e.message
         false
       end
     end

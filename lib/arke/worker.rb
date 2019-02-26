@@ -11,16 +11,20 @@ module Arke
       @queue.push(action)
     end
 
+    def to_s
+      @workload.class.name
+    end
+
     private
 
     def process
       loop do
         action = @queue.pop
-        puts "Got action : #{action.type}"
+        Arke::Log.debug "#{self}: Got action: #{action}"
         break if action.type == :shutdown
         @workload.call(action)
       end
-      puts "Leaving worker"
+      Arke::Log.debug "#{self}: Leaving worker"
     end
   end
 end

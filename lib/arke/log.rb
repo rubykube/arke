@@ -18,6 +18,10 @@ module Arke
       def debug(message)
         @logger.debug message
       end
+
+      def error(message)
+        @logger.error message
+      end
     end
   end
 end
