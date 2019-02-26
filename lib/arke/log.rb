@@ -14,6 +14,10 @@ module Arke
       def fatal(message)
         @logger.fatal message
       end
+
+      def debug(message)
+        @logger.debug message
+      end
     end
   end
 end

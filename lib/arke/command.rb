@@ -1,8 +1,8 @@
 require 'clamp'
-require 'command/root'
-require 'configuration'
-require 'log'
 require 'yaml'
+
+require 'command/root'
+require 'arke'
 
 module Arke
   module Command
@@ -14,14 +14,9 @@ module Arke
     module_function :run!
 
     def load_configuration
-      strategy = YAML.load_file('config/strategy.yaml')['strategy']
+      config = YAML.load_file('config/strategy.yaml')
 
-      Arke::Configuration.define do |config|
-        config.min_update_period = strategy['min_update_period']
-        config.strategy = strategy
-        config.target = strategy['target']
-        config.sources = strategy['sources']
-      end
+      Arke::Configuration.define { |c| c.strategy = config['strategy'] }
     end
     module_function :load_configuration
 
