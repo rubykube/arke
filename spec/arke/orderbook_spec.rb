@@ -1,3 +1,4 @@
+require 'rbtree'
 require 'orderbook'
 require 'order'
 
@@ -8,92 +9,70 @@ RSpec.describe Arke::Orderbook do
   it 'creates orderbook' do
     orderbook = Arke::Orderbook.new(market)
 
-    expect(orderbook.book).to eq({ sell: [], buy: [] })
+    expect(orderbook.book).to eq({ sell: ::RBTree.new, buy: ::RBTree.new })
   end
 
   context 'orderbook#add' do
-    let(:order_buy)  { Arke::Order.new(1, 'ethusd', 1, 1) }
-    let(:order_sell) { Arke::Order.new(2, 'ethusd', 1, -1) }
+    let(:order_buy)   { Arke::Order.new(1, 'ethusd', 1, 1) }
+    let(:order_sell)  { Arke::Order.new(2, 'ethusd', 1, -1) }
+    let(:order_sell2) { Arke::Order.new(3, 'ethusd', 1, -1) }
 
     it 'adds buy order to orderbook' do
-      orderbook.add(order_buy)
+      orderbook.add_order(order_buy)
 
       expect(orderbook.book[:buy]).not_to be_empty
-      expect(orderbook.book[:buy]).to include(order_buy)
+      expect(orderbook.book[:buy][order_buy.price]).not_to be_empty
     end
 
     it 'adds sell order to orderbook' do
-      orderbook.add(order_sell)
+      orderbook.add_order(order_sell)
 
       expect(orderbook.book[:sell]).not_to be_empty
-      expect(orderbook.book[:sell]).to include(order_sell)
+      expect(orderbook.book[:sell][order_sell.price]).not_to be_empty
     end
 
-    it 'doesnt add the same order' do
-      orderbook.add(order_sell)
-      orderbook.add(order_sell)
+    it 'doesnt add order with the same id' do
+      orderbook.add_order(order_sell)
+      orderbook.add_order(order_sell)
 
-      expect(orderbook.book[:sell].count).to eq(1)
+      expect(orderbook.book[:sell][order_sell.price].count).to eq(1)
+    end
+
+    it 'adds order with the same price' do
+      orderbook.add_order(order_sell)
+      orderbook.add_order(order_sell2)
+
+      expect(orderbook.book[:sell][order_sell.price].count).to eq(2)
     end
   end
 
-  context 'orderbook#remove' do
-    let(:order_buy)  { Arke::Order.new(1, 'ethusd', 1, 1) }
+  context 'orderbook#find' do
+    let(:order0) { Arke::Order.new(1, 'ethusd', 5, 1) }
+    let(:order1) { Arke::Order.new(2, 'ethusd', 5, 1) }
 
-    it 'removes correct order from orderbook' do
-      orderbook.add(order_buy)
-      orderbook.add(Arke::Order.new(2, 'ethusd', 1, 1))
-      orderbook.add(Arke::Order.new(3, 'ethusd', 1, -1))
+    it 'finds if order is in orderbook' do
+      orderbook.add_order(order0)
+      orderbook.add_order(order1)
 
-      orderbook.remove(order_buy)
-
-      expect(orderbook.book[:buy]).not_to include(order_buy)
-      expect(orderbook.book[:buy]).not_to be_empty
-      expect(orderbook.book[:sell]).not_to be_empty
+      expect(orderbook.send(:find, order0.side, order0.id)).not_to be_nil
+      expect(orderbook.send(:find, order0.side, order0.id).id).to eq(order0.id)
     end
 
-    it 'does nothing if non existing id' do
-      orderbook.add(order_buy)
-
-      orderbook.remove(Arke::Order.new(999999, 'ethusd', 1, 1))
-
-      expect(orderbook.book[:buy]).not_to be_empty
-      expect(orderbook.book[:buy]).to include(order_buy)
-    end
-  end
-
-  context 'orderbook#update' do
-    let(:order_buy)     { Arke::Order.new(1, 'ethusd', 1, 1) }
-    let(:order_buy_new) { Arke::Order.new(1, 'ethusd', 10, 1) }
-    let(:order_invalid) { Arke::Order.new(9999999, 'ethusd', 10, 1) }
-
-    it 'updates order' do
-      orderbook.add(order_buy)
-
-      orderbook.update(order_buy_new)
-
-      expect(orderbook.book[:buy]).not_to include(order_buy)
-      expect(orderbook.book[:buy]).to include(order_buy_new)
-    end
-
-    it 'does nothing if non existing id' do
-      orderbook.add(order_buy)
-
-      orderbook.update(order_invalid)
-
-      expect(orderbook.book[:buy]).not_to be_empty
-      expect(orderbook.book[:buy]).to include(order_buy)
-      expect(orderbook.book[:buy]).not_to include(order_invalid)
+    it 'returns false if order is not in orderbook' do
+      expect(orderbook.send(:find, order0.side, order0.id)).to be_nil
     end
   end
 
   context 'orderbook#contains?' do
     let(:order0) { Arke::Order.new(1, 'ethusd', 5, 1) }
+    let(:order1) { Arke::Order.new(2, 'ethusd', 5, 1) }
 
     it 'returns true if order is in orderbook' do
-      orderbook.add(order0)
+      orderbook.add_order(order0)
+      orderbook.add_order(order1)
 
       expect(orderbook.contains?(order0)).to equal(true)
+      expect(orderbook.contains?(order1)).to equal(true)
     end
 
     it 'returns false if order is not in orderbook' do
@@ -107,11 +86,72 @@ RSpec.describe Arke::Orderbook do
     let(:order_cheap) { Arke::Order.new(2, 'ethusd', 2, 1) }
 
     it 'gets order with the lowest price' do
-      orderbook.add(order0)
-      orderbook.add(order1)
-      orderbook.add(order_cheap)
+      orderbook.add_order(order0)
+      orderbook.add_order(order1)
+      orderbook.add_order(order_cheap)
 
-      expect(orderbook.get(:buy).price).to equal(order_cheap.price)
+      expect(orderbook.get(:buy).first.price).to equal(order_cheap.price)
+    end
+  end
+
+  context 'orderbook#remove' do
+    let(:order_buy)   { Arke::Order.new(1, 'ethusd', 1, 1) }
+
+    it 'removes correct order from orderbook' do
+      orderbook.add_order(order_buy)
+      orderbook.add_order(Arke::Order.new(2, 'ethusd', order_buy.price, 1))
+      orderbook.add_order(Arke::Order.new(3, 'ethusd', 11, -1))
+
+      orderbook.remove_order(order_buy)
+
+      expect(orderbook.contains?(order_buy)).to eq(false)
+      expect(orderbook.book[:buy][order_buy.price]).not_to be_empty
+      expect(orderbook.book[:sell]).not_to be_empty
+    end
+
+    it 'does nothing if non existing id' do
+      orderbook.add_order(order_buy)
+
+      orderbook.remove_order(Arke::Order.new(999999, 'ethusd', 10, 1))
+
+      expect(orderbook.book[:buy]).not_to be_empty
+      expect(orderbook.contains?(order_buy)).to eq(true)
+    end
+  end
+
+  context 'orderbook#update' do
+    let(:order_buy)           { Arke::Order.new(1, 'ethusd', 11, 11) }
+    let(:order_buy_new)       { Arke::Order.new(1, 'ethusd', 11, 10) }
+    let(:order_invalid)       { Arke::Order.new(999, 'ethusd', 1, 1) }
+    let(:order_buy_new_price) { Arke::Order.new(1, 'ethusd', 13, 10) }
+
+
+    it 'updates order with the same price' do
+      orderbook.add_order(order_buy)
+
+      orderbook.update_order(order_buy_new)
+
+      expect(orderbook.contains?(order_buy_new)).to eq(true)
+      expect(orderbook.get(order_buy_new.side)).to eq([order_buy_new])
+    end
+
+    it 'updates order with another price' do
+      orderbook.add_order(order_buy)
+
+      orderbook.update_order(order_buy_new_price)
+
+      expect(orderbook.contains?(order_buy_new_price)).to eq(true)
+      expect(orderbook.get(order_buy_new_price.side)).to eq([order_buy_new_price])
+    end
+
+    it 'does nothing if non existing id' do
+      orderbook.add_order(order_buy)
+
+      orderbook.update_order(order_invalid)
+
+      expect(orderbook.book[:buy]).not_to be_empty
+      expect(orderbook.contains?(order_buy)).to eq(true)
+      expect(orderbook.contains?(order_invalid)).to eq(false)
     end
   end
 end

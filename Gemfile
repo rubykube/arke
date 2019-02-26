@@ -9,6 +9,7 @@ gem 'clamp'
 gem 'faraday'
 gem 'faye-websocket'
 gem 'json'
+gem 'rbtree'
 
 gem 'pry'
 gem 'rspec'
