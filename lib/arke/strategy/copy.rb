@@ -9,7 +9,7 @@ module Arke::Strategy
       Arke::Log.debug 'Copy startegy called'
       puts
       action = Arke::Action.new(:echo_action, { 'hello' => 'world' })
-      @target.send_action(action)
+      @target.push(action)
     end
   end
 end
