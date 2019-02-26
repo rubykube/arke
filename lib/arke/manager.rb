@@ -46,7 +46,7 @@ module Arke
     def run
       trap('INT') { stop }
 
-      @workers.each(&:run)
+      #@workers.each(&:run)
 
       until @shutdown do
         timestamp = Time.now
@@ -66,7 +66,7 @@ module Arke
       shutdown_action = Arke::Action.new(:shutdown, nil)
       @shutdown = true
       @workers.each do |worker|
-        worker.send_action(shutdown_action)
+        worker.push(shutdown_action)
         # worker.lock -> we can lock worker's queue to disable new actions
         worker.join
       end

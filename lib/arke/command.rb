@@ -2,10 +2,7 @@ require 'clamp'
 require 'yaml'
 
 require 'command/root'
-require 'configuration'
-require 'log'
-require 'manager/manager'
-require 'strategy'
+require 'arke'
 
 module Arke
   module Command

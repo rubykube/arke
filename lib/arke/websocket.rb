@@ -12,7 +12,7 @@ module Arke
         sleep(0.7)
         Arke::Log.debug 'Websocket sends messages to subscribers'
         action = Arke::Action.new(:websocket, { msg: 'fake_message' })
-        @subscriber.send_action(action)
+        @subscriber.push(action)
       end
     end
 
