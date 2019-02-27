@@ -46,23 +46,6 @@ RSpec.describe Arke::Orderbook do
     end
   end
 
-  context 'orderbook#find' do
-    let(:order0) { Arke::Order.new(1, 'ethusd', 5, 1) }
-    let(:order1) { Arke::Order.new(2, 'ethusd', 5, 1) }
-
-    it 'finds if order is in orderbook' do
-      orderbook.add_order(order0)
-      orderbook.add_order(order1)
-
-      expect(orderbook.send(:find, order0.side, order0.id)).not_to be_nil
-      expect(orderbook.send(:find, order0.side, order0.id).id).to eq(order0.id)
-    end
-
-    it 'returns false if order is not in orderbook' do
-      expect(orderbook.send(:find, order0.side, order0.id)).to be_nil
-    end
-  end
-
   context 'orderbook#contains?' do
     let(:order0) { Arke::Order.new(1, 'ethusd', 5, 1) }
     let(:order1) { Arke::Order.new(2, 'ethusd', 5, 1) }
@@ -119,39 +102,4 @@ RSpec.describe Arke::Orderbook do
     end
   end
 
-  context 'orderbook#update' do
-    let(:order_buy)           { Arke::Order.new(1, 'ethusd', 11, 11) }
-    let(:order_buy_new)       { Arke::Order.new(1, 'ethusd', 11, 10) }
-    let(:order_invalid)       { Arke::Order.new(999, 'ethusd', 1, 1) }
-    let(:order_buy_new_price) { Arke::Order.new(1, 'ethusd', 13, 10) }
-
-
-    it 'updates order with the same price' do
-      orderbook.add_order(order_buy)
-
-      orderbook.update_order(order_buy_new)
-
-      expect(orderbook.contains?(order_buy_new)).to eq(true)
-      expect(orderbook.get(order_buy_new.side)).to eq([order_buy_new])
-    end
-
-    it 'updates order with another price' do
-      orderbook.add_order(order_buy)
-
-      orderbook.update_order(order_buy_new_price)
-
-      expect(orderbook.contains?(order_buy_new_price)).to eq(true)
-      expect(orderbook.get(order_buy_new_price.side)).to eq([order_buy_new_price])
-    end
-
-    it 'does nothing if non existing id' do
-      orderbook.add_order(order_buy)
-
-      orderbook.update_order(order_invalid)
-
-      expect(orderbook.book[:buy]).not_to be_empty
-      expect(orderbook.contains?(order_buy)).to eq(true)
-      expect(orderbook.contains?(order_invalid)).to eq(false)
-    end
-  end
 end
