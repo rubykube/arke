@@ -4,38 +4,20 @@ require 'json'
 
 module Arke::Exchange
   # This class holds Rubykube Exchange logic implementation
-  class Rubykube < Base
+  class Rubykube
     # Takes config (hash), strategy(+Arke::Strategy+ instance)
-    # * +strategy+ is setted in +super+
-    # * creates @connection for RestApi
     def initialize(config, strategy)
-      super
+      @strategy = strategy
 
       @api_key = config['key']
       @secret = config['secret']
-      @connection = Faraday.new("#{config['host']}/api/v2") do |faraday|
-        faraday.adapter Faraday.default_adapter
-      end
     end
-
-    # Executes single action++
-    # * +action+ is +Arke::Action+ instance
-    def call(action)
-      Arke::Log.debug "Rubykube processes action #{action}"
-
-      if action.type == :create_order
-        create_order(action.params)
-      elsif action.type == :cancel_order
-        cancel_order(action.params)
-      end
-    end
-
-    private
 
     # Takes +order+ (+Arke::Order+ instance)
     # * creates +order+ via RestApi
-    def create_order(order)
+    def create_order(connection, order)
       post(
+        connection,
         'peatio/market/orders',
         {
           market: order.market.downcase,
@@ -48,17 +30,21 @@ module Arke::Exchange
 
     # Takes +order+ (+Arke::Order+ instance)
     # * cancels +order+ via RestApi
-    def cancel_order(order)
+    def stop_order(connection, order)
       post(
+        connection,
         "peatio/market/orders/#{order.id}/cancel"
       )
     end
 
+    private
+
     # Helper method to perform post requests
+    # * takes +conn+ - faraday connection
     # * takes +path+ - request url
     # * takes +params+ - body for +POST+ request
-    def post(path, params = nil)
-      response = @connection.post do |req|
+    def post(conn, path, params = nil)
+      response = conn.post do |req|
         req.headers = generate_headers
         req.url path
         req.body = params.to_json
