@@ -1,5 +1,6 @@
 require 'exchange/bitfinex'
 require 'exchange/rubykube'
+require 'exchange/bitfaker'
 
 module Arke
   # Exchange module, contains Exchanges drivers implementation
