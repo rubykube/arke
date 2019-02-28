@@ -9,13 +9,15 @@ module Arke::Strategy
     # Processes orders and decides what action should be sent to @target
     def call(target, dax, &block)
       Arke::Log.debug 'Copy startegy called'
-      puts dax[:bitfaker].print
-      dax[:bitfaker].orderbook[:buy].each { |order|
-        yield Arke::Action.new(:ping, { exchange: 'target', order: order })
-      }
-      dax[:bitfaker].orderbook[:sell].each { |order|
-        yield Arke::Action.new(:ping, { exchange: 'target', order: order })
-      }
+      dax.each do |name, ex|
+        puts ex.print
+        ex.orderbook[:buy].each { |order|
+          yield Arke::Action.new(:ping, { exchange: 'target', order: order })
+        }
+        ex.orderbook[:sell].each { |order|
+          yield Arke::Action.new(:ping, { exchange: 'target', order: order })
+        }
+      end
     end
   end
 end
