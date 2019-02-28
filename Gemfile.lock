@@ -22,6 +22,8 @@ GEM
     eventmachine (1.2.7)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.13.1)
+      faraday (>= 0.7.4, < 1.0)
     faye-websocket (0.10.7)
       eventmachine (>= 0.12.0)
       websocket-driver (>= 0.5.1)
@@ -65,6 +67,7 @@ DEPENDENCIES
   em-http-request
   em-synchrony
   faraday
+  faraday_middleware
   faye-websocket
   json
   pry

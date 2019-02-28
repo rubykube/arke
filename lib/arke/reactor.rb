@@ -1,6 +1,9 @@
 require 'faraday'
+require 'faraday_middleware'
 require 'em-synchrony'
 require 'em-synchrony/em-http'
+
+require 'exchange/bitfinex'
 
 module Arke
   # Main event ractor loop
@@ -19,15 +22,15 @@ module Arke
       url = 'http://www.devkube.com/api/v2/barong/identity/ping'
 
       conn = Faraday.new(url: url) do |builder|
-        #builder.adapter Faraday.default_adapter
-        builder.use Faraday::Adapter::EMSynchrony
-
-        # Make http request with eventmachine and synchrony
-        # faraday.response :json
+        builder.response :logger
+        builder.response :json
+        builder.adapter :em_synchrony
       end
 
+      bf = Arke::Exchange::Bitfinex.new('ETHUSD')
       EM.synchrony do
         n=0
+        bf.start
         timer = EM::Synchrony::add_periodic_timer(1) do
           puts "the time is #{Time.now}"
           timer.cancel if (n+=1) > 5
