@@ -9,7 +9,7 @@ RSpec.describe Arke::Orderbook do
   it 'creates orderbook' do
     orderbook = Arke::Orderbook.new(market)
 
-    expect(orderbook.book).to eq({ sell: ::RBTree.new, buy: ::RBTree.new })
+    expect(orderbook.book).to eq({ sell: ::RBTree.new, buy: ::RBTree.new , index: ::RBTree.new })
   end
 
   context 'orderbook#add' do
@@ -18,29 +18,29 @@ RSpec.describe Arke::Orderbook do
     let(:order_sell2) { Arke::Order.new(3, 'ethusd', 1, 1, :sell) }
 
     it 'adds buy order to orderbook' do
-      orderbook.add_order(order_buy)
+      orderbook.create(order_buy)
 
       expect(orderbook.book[:buy]).not_to be_empty
       expect(orderbook.book[:buy][order_buy.price]).not_to be_empty
     end
 
     it 'adds sell order to orderbook' do
-      orderbook.add_order(order_sell)
+      orderbook.create(order_sell)
 
       expect(orderbook.book[:sell]).not_to be_empty
       expect(orderbook.book[:sell][order_sell.price]).not_to be_empty
     end
 
     it 'doesnt add order with the same id' do
-      orderbook.add_order(order_sell)
-      orderbook.add_order(order_sell)
+      orderbook.create(order_sell)
+      orderbook.create(order_sell)
 
       expect(orderbook.book[:sell][order_sell.price].count).to eq(1)
     end
 
     it 'adds order with the same price' do
-      orderbook.add_order(order_sell)
-      orderbook.add_order(order_sell2)
+      orderbook.create(order_sell)
+      orderbook.create(order_sell2)
 
       expect(orderbook.book[:sell][order_sell.price].count).to eq(2)
     end
@@ -51,8 +51,8 @@ RSpec.describe Arke::Orderbook do
     let(:order1) { Arke::Order.new(2, 'ethusd', 5, 1, :buy) }
 
     it 'returns true if order is in orderbook' do
-      orderbook.add_order(order0)
-      orderbook.add_order(order1)
+      orderbook.create(order0)
+      orderbook.create(order1)
 
       expect(orderbook.contains?(order0)).to equal(true)
       expect(orderbook.contains?(order1)).to equal(true)
@@ -69,9 +69,9 @@ RSpec.describe Arke::Orderbook do
     let(:order_cheap) { Arke::Order.new(2, 'ethusd', 2, 1, :buy) }
 
     it 'gets order with the lowest price' do
-      orderbook.add_order(order0)
-      orderbook.add_order(order1)
-      orderbook.add_order(order_cheap)
+      orderbook.create(order0)
+      orderbook.create(order1)
+      orderbook.create(order_cheap)
 
       expect(orderbook.get(:buy).first.price).to equal(order_cheap.price)
     end
@@ -81,11 +81,11 @@ RSpec.describe Arke::Orderbook do
     let(:order_buy)   { Arke::Order.new(1, 'ethusd', 1, 1, :buy) }
 
     it 'removes correct order from orderbook' do
-      orderbook.add_order(order_buy)
-      orderbook.add_order(Arke::Order.new(2, 'ethusd', order_buy.price, 1, :buy))
-      orderbook.add_order(Arke::Order.new(3, 'ethusd', 11, 1, :sell))
+      orderbook.create(order_buy)
+      orderbook.create(Arke::Order.new(2, 'ethusd', order_buy.price, 1, :buy))
+      orderbook.create(Arke::Order.new(3, 'ethusd', 11, 1, :sell))
 
-      orderbook.remove_order(order_buy)
+      orderbook.delete(order_buy)
 
       expect(orderbook.contains?(order_buy)).to eq(false)
       expect(orderbook.book[:buy][order_buy.price]).not_to be_empty
@@ -93,9 +93,9 @@ RSpec.describe Arke::Orderbook do
     end
 
     it 'does nothing if non existing id' do
-      orderbook.add_order(order_buy)
+      orderbook.create(order_buy)
 
-      orderbook.remove_order(Arke::Order.new(999999, 'ethusd', 10, 1, :buy))
+      orderbook.delete(Arke::Order.new(999999, 'ethusd', 10, 1, :buy))
 
       expect(orderbook.book[:buy]).not_to be_empty
       expect(orderbook.contains?(order_buy)).to eq(true)
