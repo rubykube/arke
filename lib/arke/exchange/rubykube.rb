@@ -3,7 +3,11 @@ require 'openssl'
 require 'json'
 
 module Arke::Exchange
+  # This class holds Rubykube Exchange logic implementation
   class Rubykube < Base
+    # Takes config (hash), strategy(+Arke::Strategy+ instance)
+    # * +strategy+ is setted in +super+
+    # * creates @connection for RestApi
     def initialize(config, strategy)
       super
 
@@ -14,6 +18,8 @@ module Arke::Exchange
       end
     end
 
+    # Executes single action++
+    # * +action+ is +Arke::Action+ instance
     def call(action)
       Arke::Log.debug "Rubykube processes action #{action}"
 
@@ -26,6 +32,8 @@ module Arke::Exchange
 
     private
 
+    # Takes +order+ (+Arke::Order+ instance)
+    # * creates +order+ via RestApi
     def create_order(order)
       post(
         'peatio/market/orders',
@@ -38,12 +46,17 @@ module Arke::Exchange
       )
     end
 
+    # Takes +order+ (+Arke::Order+ instance)
+    # * cancels +order+ via RestApi
     def cancel_order(order)
       post(
         "peatio/market/orders/#{order.id}/cancel"
       )
     end
 
+    # Helper method to perform post requests
+    # * takes +path+ - request url
+    # * takes +params+ - body for +POST+ request
     def post(path, params = nil)
       response = @connection.post do |req|
         req.headers = generate_headers
@@ -56,6 +69,7 @@ module Arke::Exchange
       response
     end
 
+    # Helper method, generates headers to authenticate with +api_key+
     def generate_headers
       nonce = Time.now.to_i.to_s
       {
@@ -74,6 +88,7 @@ module Arke::Exchange
       end
     end
 
+    # Helper method, checks for +json+ integrity
     def valid_json?(json)
       begin
         JSON.parse(json)

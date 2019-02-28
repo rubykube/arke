@@ -1,7 +1,6 @@
-
-# WIP
-# need a way to kill it properly
 module Arke
+  # This class holds WebSocket connection logic
+  # * transmits received +messages+ to +Arke::Worker's+ +Queue+
   class Websocket
     def initialize(subscriber)
       @subscriber = subscriber

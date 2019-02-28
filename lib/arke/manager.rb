@@ -4,12 +4,21 @@ require 'action'
 require 'log'
 
 module Arke
+  # This class holds thread (Arke::Worker) creation and shutdown logic
   class Manager
+    # * @workers is collection of running threads
+    # * @shutdown is a flag which controls strategy execution
     def initialize
       @workers = []
       @shutdown = false
     end
 
+    # Inits resources and run Arke::Workers
+    # Takes +config+ - hash with a strategy configuration
+    # * inits +Arke::Strategy+ instance
+    # * inits +Arke::Exchange+ instances
+    # * sets +target_worker+ for @strategy (target exchange)
+    # * run +Arke::Workers+
     def bootstrap(config)
       @strategy = Arke::Strategy.create(config)
       @rate_limit = config['target']['api_rate_limit']
@@ -19,30 +28,24 @@ module Arke
 
         @workers.push(Arke::Worker.new(exchange))
       end
-      # we need to give access to workers for strategy to send actions
       @workers.each { |w| @strategy.add_source_worker(w) }
 
       target = Arke::Exchange.create(config['target'], @strategy)
       target_worker = Arke::Worker.new(target)
       @workers.push(target_worker)
 
-      # we need to share target worker with strategy as well
       @strategy.set_target_worker(target_worker)
 
-      ####### WIP separate worker for websocket
       @websocket = Arke::Websocket.new(@workers.first)
-      # in future we can subscribe worker, if we have
-      # weboscket:
-      #    url: ...
-      # in config
-      # @websocket.subscribe
 
       Thread.new { @websocket.run }
-      ################
 
       run
     end
 
+    # Starts workers and strategy
+    # * traps SIGINT
+    # * strategy execution rate is limited by target's +api_rate_limit+
     def run
       trap('INT') { stop }
 
@@ -62,6 +65,9 @@ module Arke
       end
     end
 
+    # Stops workers and strategy execution
+    # * sets @shutdown flag to +true+
+    # * broadcasts +:shutdown+ action to workers
     def stop
       shutdown_action = Arke::Action.new(:shutdown, nil)
       @shutdown = true
