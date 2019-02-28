@@ -30,7 +30,7 @@ Arke is a liquidity aggregation tool which supports copy strategy
 ```yaml
 strategy:
   type: 'copy'
-  pair: 'ETHUSD'
+  market: 'ETHUSD'
   target:
     driver: rubykube
     host: "http://www.example1.com"
