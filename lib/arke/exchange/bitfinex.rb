@@ -53,7 +53,6 @@ module Arke::Exchange
     end
 
     def process_event_message(msg)
-      pp msg
       case msg['event']
       when 'auth'
       when 'subscribed'
@@ -68,7 +67,8 @@ module Arke::Exchange
 
     def print
       puts "Exchange #{@driver} market: #{@market}"
-      puts @orderbook.to_s
+      puts @orderbook.print(:buy)
+      puts @orderbook.print(:sell)
     end
 
     def on_open(e)

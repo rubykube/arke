@@ -53,7 +53,7 @@ module Arke
         timer = EM::Synchrony::add_periodic_timer(@min_delay) do
           Arke::Log.debug "Calling Strategy #{Time.now}"
           timer.cancel if @shutdown
-          pp @dax[:bitfaker].orderbook
+          puts @dax[:bitfaker].print
           response = conn.get
         end
       end

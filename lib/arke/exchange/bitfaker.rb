@@ -14,6 +14,14 @@ module Arke::Exchange
       load_orderbook
     end
 
+    def print
+      puts "Exchange #{@driver} market: #{@market}"
+      puts @orderbook.print(:buy)
+      puts @orderbook.print(:sell)
+    end
+
+    private
+
     def load_orderbook
       fixture = YAML.load_file('spec/support/fixtures/bitfinex.yaml')
       orders = fixture[1]

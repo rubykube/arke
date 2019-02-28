@@ -1,4 +1,5 @@
 require 'rbtree'
+require 'tty-table'
 require 'order'
 
 module Arke
@@ -33,23 +34,14 @@ module Arke
       @book[side].first.last
     end
 
-    def to_s
-      puts "BUY"
-      puts "=" * 5
-      @book[:buy].each {|k, v|
-        puts "Price: #{k}"
-        v.each {|o|
-          puts o.to_s
-        }
+    def print(side = :buy)
+      header = ['Price', 'Amount']
+      rows = []
+      @book[side].each {|price, orders|
+        rows << ['%.6f' % price, '%.6f' % orders.map { |h| h.amount }.sum]
       }
-      puts "SELL"
-      puts "=" * 5
-      @book[:sell].each {|k, v|
-        puts "Price: #{k}"
-        v.each {|o|
-          puts o.to_s
-        }
-      }
+      table = TTY::Table.new header, rows
+      table.render(:ascii, padding: [0, 2], alignment: [:right])
     end
 
     private

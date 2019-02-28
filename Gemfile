@@ -14,6 +14,7 @@ gem 'faraday_middleware'
 gem 'faye-websocket'
 gem 'json'
 gem 'rbtree'
+gem 'tty-table'
 
 gem 'pry'
 gem 'rspec'

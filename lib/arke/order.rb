@@ -1,7 +1,7 @@
 module Arke
   class Order
 
-    attr :id, :market, :price, :amount, :side
+    attr_reader :id, :market, :price, :amount, :side
 
     def initialize(id, market, price, amount, side)
       @id = id
