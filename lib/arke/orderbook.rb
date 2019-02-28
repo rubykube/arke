@@ -44,6 +44,10 @@ module Arke
       table.render(:ascii, padding: [0, 2], alignment: [:right])
     end
 
+    def [](side)
+      @book[side]
+    end
+
     private
 
     def add(order)
