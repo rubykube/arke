@@ -11,13 +11,15 @@ module Arke::Exchange
     def initialize(config)
       @api_key = config['key']
       @secret = config['secret']
+      @connection = Faraday.new("#{config['host']}/api/v2") do |faraday|
+        faraday.adapter Faraday.default_adapter
+      end
     end
 
     # Takes +order+ (+Arke::Order+ instance)
     # * creates +order+ via RestApi
-    def create_order(connection, order)
+    def create_order(order)
       post(
-        connection,
         'peatio/market/orders',
         {
           market: order.market.downcase,
@@ -30,9 +32,8 @@ module Arke::Exchange
 
     # Takes +order+ (+Arke::Order+ instance)
     # * cancels +order+ via RestApi
-    def stop_order(connection, order)
+    def stop_order(order)
       post(
-        connection,
         "peatio/market/orders/#{order.id}/cancel"
       )
     end
@@ -43,8 +44,8 @@ module Arke::Exchange
     # * takes +conn+ - faraday connection
     # * takes +path+ - request url
     # * takes +params+ - body for +POST+ request
-    def post(conn, path, params = nil)
-      response = conn.post do |req|
+    def post(path, params = nil)
+      response = @connection.post do |req|
         req.headers = generate_headers
         req.url path
         req.body = params.to_json
