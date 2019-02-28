@@ -6,9 +6,9 @@ module Arke::Exchange
   # This class holds Rubykube Exchange logic implementation
   class Rubykube
     # Takes config (hash), strategy(+Arke::Strategy+ instance)
-    def initialize(config, strategy)
-      @strategy = strategy
-
+    # * +strategy+ is setted in +super+
+    # * creates @connection for RestApi
+    def initialize(config)
       @api_key = config['key']
       @secret = config['secret']
     end
