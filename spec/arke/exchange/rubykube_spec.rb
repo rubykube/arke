@@ -21,9 +21,9 @@ RSpec.describe Arke::Exchange::Rubykube do
     'secret' => SecureRandom.hex
     }
   }
-  let(:strategy)   { Arke::Strategy::Base.new(strategy_config) }
+  let(:strategy)   { Arke::Strategy::Copy.new(strategy_config) }
   let(:order)      { Arke::Order.new(1, 'ethusd', 1, 1) }
-  let(:rubykube)   { Arke::Exchange::Rubykube.new(exchange_config, strategy) }
+  let(:rubykube)   { Arke::Exchange::Rubykube.new(exchange_config) }
   let(:connection) {
     Faraday.new("#{exchange_config['host']}/api/v2") do |faraday|
       faraday.adapter Faraday.default_adapter

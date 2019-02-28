@@ -3,7 +3,8 @@ require 'faraday_middleware'
 require 'em-synchrony'
 require 'em-synchrony/em-http'
 
-require 'exchange/bitfinex'
+require 'exchange'
+require 'strategy'
 
 module Arke
   # Main event ractor loop
@@ -12,6 +13,10 @@ module Arke
     # * @shutdown is a flag which controls strategy execution
     def initialize(config)
       @shutdown = false
+      @strategy = Arke::Strategy.create(config)
+      @sources = config['sources'].map { |source| Arke::Exchange.create_ws(source, config['pair']) }
+      @target = Arke::Exchange.create(config['target'])
+      @api_rate_limit = config['target']['api_rate_limit']
     end
 
     # * traps SIGINT
@@ -27,13 +32,13 @@ module Arke
         builder.adapter :em_synchrony
       end
 
-      bf = Arke::Exchange::Bitfinex.new('ETHUSD')
+      # bf = Arke::Exchange::Bitfinex.new('ETHUSD')
       EM.synchrony do
-        n=0
-        bf.start
-        timer = EM::Synchrony::add_periodic_timer(1) do
+        @sources.each(&:start)
+
+        timer = EM::Synchrony::add_periodic_timer(@api_rate_limit) do
           puts "the time is #{Time.now}"
-          timer.cancel if (n+=1) > 5
+          timer.cancel if @shutdown
           response = conn.get
           pp response.body
         end
