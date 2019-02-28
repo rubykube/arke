@@ -20,6 +20,14 @@ module Arke::Exchange
       puts @orderbook.print(:sell)
     end
 
+    def create_order(order)
+      pp order
+    end
+
+    def stop_order(order)
+      pp order
+    end
+
     private
 
     def load_orderbook
