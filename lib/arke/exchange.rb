@@ -1,4 +1,3 @@
-require 'exchange/base'
 require 'exchange/bitfinex'
 require 'exchange/rubykube'
 
