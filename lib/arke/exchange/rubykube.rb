@@ -1,7 +1,3 @@
-require 'faraday'
-require 'openssl'
-require 'json'
-
 module Arke::Exchange
   # This class holds Rubykube Exchange logic implementation
   class Rubykube

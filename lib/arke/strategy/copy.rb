@@ -11,11 +11,12 @@ module Arke::Strategy
       Arke::Log.debug 'Copy startegy called'
       dax.each do |name, ex|
         puts ex.print
+        yield Arke::Action.new(:ping, { exchange: 'target' })
         ex.orderbook[:buy].each { |order|
-          yield Arke::Action.new(:ping, { exchange: 'target', order: order })
+          yield Arke::Action.new(:order_create, { exchange: 'target', order: order })
         }
         ex.orderbook[:sell].each { |order|
-          yield Arke::Action.new(:ping, { exchange: 'target', order: order })
+          yield Arke::Action.new(:order_create, { exchange: 'target', order: order })
         }
       end
     end
