@@ -12,10 +12,6 @@ module Arke
       exchange_class(config['driver']).new(config)
     end
 
-    def self.create_ws(config, market)
-      exchange_class(config['driver']).new(market)
-    end
-
     # Takes +dirver+ - +String+
     # Resolves correct Exchange class by it's name
     def self.exchange_class(driver)

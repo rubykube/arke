@@ -1,16 +1,16 @@
 strategy:
   type: copy
-  market: 'ETHUSD'
   target:
     driver: rubykube
+    market: 'ETHUSD'
     host: "http://www.devkube.com"
-    name: John
     key: ""
     secret: ""
-    rate_limit: 1.0
+    rate_limit: 0.2
   sources:
     - driver: bitfinex
-      host: ""
-      name: Joe
+      market: 'tETHUSD'
+      host: "api.bitfinex.com"
       key: ""
       secret: ""
+      rate_limit: 0.2

@@ -1,4 +1,5 @@
 require 'rbtree'
+require 'order'
 
 module Arke
   class Orderbook
@@ -8,27 +9,47 @@ module Arke
     def initialize(market)
       @market = market
       @book = {
-        sell: ::RBTree.new,
-        buy: ::RBTree.new
+        index: ::RBTree.new,
+        buy: ::RBTree.new,
+        sell: ::RBTree.new
       }
     end
 
-    def add_order(order)
+    def create(order)
       add(order) unless contains?(order)
     end
 
-    def remove_order(order)
+    def delete(order)
       remove(order) if order && contains?(order)
     end
 
     def contains?(order)
       return false if @book[order.side][order.price].nil?
-      @book[order.side][order.price].find{ |o| o.id == order.id } ? true : false
+      @book[order.side][order.price].find { |o| o.id == order.id } ? true : false
     end
 
     # get with the lowest price
     def get(side)
       @book[side].first.last
+    end
+
+    def to_s
+      puts "BUY"
+      puts "=" * 5
+      @book[:buy].each {|k, v|
+        puts "Price: #{k}"
+        v.each {|o|
+          puts o.to_s
+        }
+      }
+      puts "SELL"
+      puts "=" * 5
+      @book[:sell].each {|k, v|
+        puts "Price: #{k}"
+        v.each {|o|
+          puts o.to_s
+        }
+      }
     end
 
     private

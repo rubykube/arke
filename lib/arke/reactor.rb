@@ -14,12 +14,20 @@ module Arke
     def initialize(config)
       @shutdown = false
       @strategy = Arke::Strategy.create(config)
-      @sources = config['sources'].map { |source| Arke::Exchange.create_ws(source, config['market']) }
+      @dax = build_dax(config)
       @target = Arke::Exchange.create(config['target'])
 
       rate_limit = config['target']['rate_limit'] || 1.0
       rate_limit = 1.0 if rate_limit <= 0
       @min_delay = 1.0 / rate_limit
+    end
+
+    def build_dax(config)
+      dax = {}
+      config['sources'].each { |ex|
+        dax[ex['driver'].to_sym] = Arke::Exchange.create(ex)
+      }
+      return dax
     end
 
     # * traps SIGINT
@@ -37,13 +45,16 @@ module Arke
 
       # bf = Arke::Exchange::Bitfinex.new('ETHUSD')
       EM.synchrony do
-        @sources.each(&:start)
+        @dax.each { |name, exchange|
+          Arke::Log.debug "Starting Exchange: #{name}"
+          exchange.start
+        }
 
         timer = EM::Synchrony::add_periodic_timer(@min_delay) do
-          puts "the time is #{Time.now}"
+          Arke::Log.debug "Calling Strategy #{Time.now}"
           timer.cancel if @shutdown
+          pp @dax[:bitfinex].orderbook
           response = conn.get
-          pp response.body
         end
       end
     end

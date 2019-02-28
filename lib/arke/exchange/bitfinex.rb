@@ -1,15 +1,18 @@
 require 'faye/websocket'
 require 'eventmachine'
 require 'json'
-require 'order'
-require 'action'
+require 'orderbook'
 
 module Arke::Exchange
   class Bitfinex
 
-    def initialize(strategy)
-      @url = 'wss://api.bitfinex.com/ws/2'
-      @strategy = strategy
+    attr_reader :orderbook
+
+    def initialize(opts)
+      @driver = opts['driver']
+      @url = 'wss://%s/ws/2' % opts['host']
+      @market = opts['market']
+      @orderbook = Arke::Orderbook.new(@market)
     end
 
     def process_message(msg)
@@ -31,43 +34,30 @@ module Arke::Exchange
     end
 
     def process_data(data)
-      order = parse_ws_data(data)
-      order.amount.zero? ? push(:cancel_order, order) : push(:create_order, order)
+      order = build_order(data)
+      if order.price.zero?
+        @orderbook.delete(order)
+      else
+        @orderbook.create(order)
+      end
     end
 
-    def parse_ws_data(data)
-      data[2].positive? ? build_buy_order(data) : build_sell_order(data)
-    end
-
-    def push(action, order)
-      @strategy.push(Arke::Action.new(action, order))
-    end
-
-    def build_buy_order(data)
-      Arke::Order.new(
-        data[0],
-        @strategy.pair,
-        data[1],
-        data[2],
-        :buy
-      )
-    end
-
-    def build_sell_order(data)
-      Arke::Order.new(
-        data[0],
-        @strategy.pair,
-        data[1],
-        data[2] * -1,
-        :sell
-      )
+    def build_order(data)
+      id, price, amount = data
+      side = :buy
+      if amount.negative?
+        side = :sell
+        amount = amount * -1
+      end
+      Arke::Order.new(id, @market, price, amount, side)
     end
 
     def process_event_message(msg)
+      pp msg
       case msg['event']
       when 'auth'
       when 'subscribed'
-        handle_subscribed_event(msg)
+        Arke::Log.info "Event: #{msg['event']}"
       when 'unsubscribed'
       when 'info'
       when 'conf'
@@ -76,15 +66,16 @@ module Arke::Exchange
       end
     end
 
-    def handle_subscribed_event(msg)
-      Arke::Log.info "Event: #{msg['event']}"
+    def print
+      puts "Exchange #{@driver} market: #{@market}"
+      puts @orderbook.to_s
     end
 
     def on_open(e)
       sub = {
         event: "subscribe",
         channel: "book",
-        market: @market,
+        pair: @market,
         prec: "R0"
       }
 
@@ -119,8 +110,5 @@ module Arke::Exchange
       end
     end
 
-    def print
-      @map.each { |item| pp item }
-    end
   end
 end
