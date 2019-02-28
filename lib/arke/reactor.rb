@@ -20,6 +20,7 @@ module Arke
       rate_limit = config['target']['rate_limit'] || 1.0
       rate_limit = 1.0 if rate_limit <= 0
       @min_delay = 1.0 / rate_limit
+      trap('INT') { stop }
     end
 
     def build_dax(config)
@@ -33,28 +34,15 @@ module Arke
     # * traps SIGINT
     # * strategy execution rate is limited by target's +rate_limit+
     def run
-      trap('INT') { stop }
-
-      url = 'http://www.devkube.com/api/v2/barong/identity/ping'
-
-      conn = Faraday.new(url: url) do |builder|
-        builder.response :logger
-        builder.response :json
-        builder.adapter :em_synchrony
-      end
-
-      # bf = Arke::Exchange::Bitfinex.new('ETHUSD')
       EM.synchrony do
         @dax.each { |name, exchange|
           Arke::Log.debug "Starting Exchange: #{name}"
           exchange.start
         }
 
-        timer = EM::Synchrony::add_periodic_timer(@min_delay) do
+        @timer = EM::Synchrony::add_periodic_timer(@min_delay) do
           Arke::Log.debug "Calling Strategy #{Time.now}"
-          timer.cancel if @shutdown
-          puts @dax[:bitfaker].print
-          response = conn.get
+          @strategy.call(@target, @dax)
         end
       end
     end
@@ -63,7 +51,9 @@ module Arke
     # * sets @shutdown flag to +true+
     # * broadcasts +:shutdown+ action to workers
     def stop
+      puts 'Shutdown trading'
       @shutdown = true
+      @timer.cancel
       EM.stop
     end
   end

@@ -3,20 +3,13 @@ module Arke::Strategy
   # * aggreagates orders from sources
   # * push order to target
   class Copy < Base
-    def initialize(config)
-      super
-    end
 
     # Processes orders and decides what action should be sent to @target
-    def execute
-      # So, here we need access to workers, at least to target worker
+    def call(target, dax)
+      # Arke::Action.new(:echo_action, { 'hello' => 'world' })
       Arke::Log.debug 'Copy startegy called'
-
-      Arke::Action.new(:echo_action, { 'hello' => 'world' })
-    end
-
-    def push(action)
-      super
+      puts dax[:bitfaker].print
+      response = target.ping
     end
   end
 end

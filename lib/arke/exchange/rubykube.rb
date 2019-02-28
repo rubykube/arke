@@ -5,15 +5,23 @@ require 'json'
 module Arke::Exchange
   # This class holds Rubykube Exchange logic implementation
   class Rubykube
+
     # Takes config (hash), strategy(+Arke::Strategy+ instance)
     # * +strategy+ is setted in +super+
     # * creates @connection for RestApi
     def initialize(config)
       @api_key = config['key']
       @secret = config['secret']
-      @connection = Faraday.new("#{config['host']}/api/v2") do |faraday|
-        faraday.adapter Faraday.default_adapter
+      @connection = Faraday.new(config['host']) do |builder|
+        builder.response :logger
+        builder.response :json
+        builder.adapter :em_synchrony
       end
+    end
+
+    # Ping the api
+    def ping
+      @connection.get '/api/v2/barong/identity/ping'
     end
 
     # Takes +order+ (+Arke::Order+ instance)
@@ -50,9 +58,7 @@ module Arke::Exchange
         req.url path
         req.body = params.to_json
       end
-
       Arke::Log.fatal(build_error(response)) if response.env.status != 201
-
       response
     end
 
