@@ -1,13 +1,15 @@
 require 'faye/websocket'
 require 'eventmachine'
 require 'json'
+require 'order'
+require 'action'
 
 module Arke::Exchange
   class Bitfinex
 
-    def initialize(pair)
+    def initialize(strategy)
       @url = 'wss://api.bitfinex.com/ws/2'
-      @market = pair
+      @strategy = strategy
     end
 
     def process_message(msg)
@@ -22,14 +24,43 @@ module Arke::Exchange
       data = msg[1]
 
       if data.length == 3
-        update_order(data)
+        process_data(data)
       elsif data.length > 3
-        data.each { |order| update_order(order) }
+        data.each { |order| process_data(order) }
       end
     end
 
-    def update_order(data)
-      Arke::Log.info "Got Order: #{data}"
+    def process_data(data)
+      order = parse_ws_data(data)
+      order.amount.zero? ? push(:cancel_order, order) : push(:create_order, order)
+    end
+
+    def parse_ws_data(data)
+      data[2].positive? ? build_buy_order(data) : build_sell_order(data)
+    end
+
+    def push(action, order)
+      @strategy.push(Arke::Action.new(action, order))
+    end
+
+    def build_buy_order(data)
+      Arke::Order.new(
+        data[0],
+        @strategy.pair,
+        data[1],
+        data[2],
+        :buy
+      )
+    end
+
+    def build_sell_order(data)
+      Arke::Order.new(
+        data[0],
+        @strategy.pair,
+        data[1],
+        data[2] * -1,
+        :sell
+      )
     end
 
     def process_event_message(msg)

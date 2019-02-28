@@ -2,8 +2,9 @@ module Arke::Strategy
   # This class implements basic copy strategy behaviour
   # * aggreagates orders from sources
   # * push order to target
-  class Copy
+  class Copy < Base
     def initialize(config)
+      super
     end
 
     # Processes orders and decides what action should be sent to @target
@@ -12,6 +13,10 @@ module Arke::Strategy
       Arke::Log.debug 'Copy startegy called'
 
       Arke::Action.new(:echo_action, { 'hello' => 'world' })
+    end
+
+    def push(action)
+      super
     end
   end
 end

@@ -1,3 +1,4 @@
+require 'strategy/base'
 require 'strategy/copy'
 
 module Arke

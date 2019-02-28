@@ -22,7 +22,7 @@ RSpec.describe Arke::Exchange::Rubykube do
     }
   }
   let(:strategy)   { Arke::Strategy::Copy.new(strategy_config) }
-  let(:order)      { Arke::Order.new(1, 'ethusd', 1, 1) }
+  let(:order)      { Arke::Order.new(1, 'ethusd', 1, 1, :buy) }
   let(:rubykube)   { Arke::Exchange::Rubykube.new(exchange_config) }
   let(:connection) {
     Faraday.new("#{exchange_config['host']}/api/v2") do |faraday|
