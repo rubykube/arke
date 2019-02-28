@@ -5,6 +5,9 @@ require 'em-synchrony/em-http'
 
 require 'exchange'
 require 'strategy'
+require 'exchange/bitfinex'
+require 'exchange/rubykube'
+require 'order' # FOR TEST
 
 module Arke
   # Main event ractor loop
@@ -24,22 +27,19 @@ module Arke
     def run
       trap('INT') { stop }
 
-      url = 'http://www.devkube.com/api/v2/barong/identity/ping'
-
-      conn = Faraday.new(url: url) do |builder|
+      conn = Faraday.new(url: "#{@target.host}/api/v2") do |builder|
         builder.response :logger
         builder.response :json
         builder.adapter :em_synchrony
       end
 
-      # bf = Arke::Exchange::Bitfinex.new('ETHUSD')
       EM.synchrony do
         @sources.each(&:start)
 
         timer = EM::Synchrony::add_periodic_timer(@api_rate_limit) do
           puts "the time is #{Time.now}"
           timer.cancel if @shutdown
-          response = conn.get
+          response = @target.create_order(conn, Arke::Order.new(99999999, 'ethusd', 1, 10))
           pp response.body
         end
       end

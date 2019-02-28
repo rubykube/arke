@@ -5,12 +5,15 @@ require 'json'
 module Arke::Exchange
   # This class holds Rubykube Exchange logic implementation
   class Rubykube
+
+    attr_reader :host
     # Takes config (hash), strategy(+Arke::Strategy+ instance)
     # * +strategy+ is setted in +super+
     # * creates @connection for RestApi
     def initialize(config)
       @api_key = config['key']
       @secret = config['secret']
+      @host = config['host']
     end
 
     # Takes +order+ (+Arke::Order+ instance)
