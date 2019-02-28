@@ -14,13 +14,16 @@ module Arke
     def initialize(config)
       @shutdown = false
       @strategy = Arke::Strategy.create(config)
-      @sources = config['sources'].map { |source| Arke::Exchange.create_ws(source, config['pair']) }
+      @sources = config['sources'].map { |source| Arke::Exchange.create_ws(source, config['market']) }
       @target = Arke::Exchange.create(config['target'])
-      @api_rate_limit = config['target']['api_rate_limit']
+
+      rate_limit = config['target']['rate_limit'] || 1.0
+      rate_limit = 1.0 if rate_limit <= 0
+      @min_delay = 1.0 / rate_limit
     end
 
     # * traps SIGINT
-    # * strategy execution rate is limited by target's +api_rate_limit+
+    # * strategy execution rate is limited by target's +rate_limit+
     def run
       trap('INT') { stop }
 
@@ -36,7 +39,7 @@ module Arke
       EM.synchrony do
         @sources.each(&:start)
 
-        timer = EM::Synchrony::add_periodic_timer(@api_rate_limit) do
+        timer = EM::Synchrony::add_periodic_timer(@min_delay) do
           puts "the time is #{Time.now}"
           timer.cancel if @shutdown
           response = conn.get

@@ -84,7 +84,7 @@ module Arke::Exchange
       sub = {
         event: "subscribe",
         channel: "book",
-        pair: @market,
+        market: @market,
         prec: "R0"
       }
 
