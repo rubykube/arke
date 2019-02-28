@@ -5,7 +5,10 @@ source "https://rubygems.org"
 git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 ruby '2.6.1'
+
 gem 'clamp'
+gem 'em-synchrony'
+gem 'em-http-request'
 gem 'faraday'
 gem 'faye-websocket'
 gem 'json'

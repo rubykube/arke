@@ -1,8 +1,6 @@
 require 'configuration'
 require 'log'
-require 'worker'
-require 'manager'
-require 'strategy'
+require 'reactor'
 
 module Arke
 end
