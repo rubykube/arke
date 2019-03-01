@@ -1,17 +1,18 @@
 require 'faye/websocket'
 require 'eventmachine'
 require 'json'
+require 'exchange/base'
 require 'orderbook'
 
 module Arke::Exchange
-  class Bitfinex
+  class Bitfinex < Base
 
     attr_reader :orderbook
 
     def initialize(opts)
-      @driver = opts['driver']
+      super
+
       @url = 'wss://%s/ws/2' % opts['host']
-      @market = opts['market']
       @orderbook = Arke::Orderbook.new(@market)
     end
 

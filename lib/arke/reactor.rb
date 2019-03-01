@@ -17,9 +17,6 @@ module Arke
       @target = Arke::Exchange.create(config['target'])
       @dax = build_dax(config)
 
-      rate_limit = config['target']['rate_limit'] || 1.0
-      rate_limit = 1.0 if rate_limit <= 0
-      @min_delay = 1.0 / rate_limit
       trap('INT') { stop }
     end
 
@@ -34,22 +31,26 @@ module Arke
     # * traps SIGINT
     # * strategy execution rate is limited by target's +rate_limit+
     def run
-      @queue = EM::Queue.new
       EM.synchrony do
-        @dax.each { |name, exchange|
+        @dax.each do |name, exchange|
           Arke::Log.debug "Starting Exchange: #{name}"
-          exchange.start
-        }
 
-        @timer = EM::Synchrony::add_periodic_timer(@min_delay) do
-          Arke::Log.debug "Calling Strategy #{Time.now} - Queue size: #{@queue.size}"
-          @strategy.call(@target, @dax) do |action|
-            @queue.push(action)
+          exchange.timer = EM::Synchrony::add_periodic_timer(@target.min_delay) do
+            Arke::Log.debug "Scheduling Action #{Time.now} - Exchange #{name} - Queue size: #{exchange.queue.size}"
+            exchange.queue.pop do |action|
+              Arke::Log.debug "pop: #{action}"
+              schedule(action)
+            end
           end
-          @queue.pop { |action|
-            Arke::Log.debug "pop: #{action}"
-            schedule(action)
-          }
+
+          exchange.start
+        end
+
+        @timer = EM::Synchrony::add_periodic_timer(@target.min_delay) do
+          Arke::Log.debug "Calling Strategy #{Time.now}"
+          @strategy.call(@target, @dax) do |action|
+            @dax[action.destination].queue.push(action)
+          end
         end
       end
     end
@@ -72,6 +73,7 @@ module Arke
       puts 'Shutdown trading'
       @shutdown = true
       @timer.cancel
+      @dax.each { |name, exchange| exchange.timer.cancel }
       EM.stop
     end
   end

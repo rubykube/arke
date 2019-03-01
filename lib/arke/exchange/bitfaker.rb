@@ -1,12 +1,14 @@
+require 'exchange/base'
 require 'orderbook'
 
 module Arke::Exchange
-  class Bitfaker
+  class Bitfaker < Base
 
     attr_reader :orderbook
 
     def initialize(opts)
-      @market = opts['market']
+      super
+
       @orderbook = Arke::Orderbook.new(@market)
     end
 
