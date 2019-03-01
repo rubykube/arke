@@ -24,10 +24,9 @@ describe Arke::Exchange::Bitfinex do
     end
 
     it '#build_order with positive amount' do
-      id, price, amount = data_create
+      price, _count, amount = data_create
       order = bitfinex.build_order(data_create)
 
-      expect(order.id).to eq(id)
       expect(order.price).to eq(price)
       expect(order.amount).to eq(amount)
       expect(order.side).to eq(:buy)
@@ -35,10 +34,9 @@ describe Arke::Exchange::Bitfinex do
     end
 
     it '#build_order with negative amount' do
-      id, price, amount = data_create_sell
+      price, _count, amount = data_create_sell
       order = bitfinex.build_order(data_create_sell)
 
-      expect(order.id).to eq(id)
       expect(order.price).to eq(price)
       expect(order.amount).to eq(-amount)
       expect(order.side).to eq(:sell)
@@ -46,7 +44,7 @@ describe Arke::Exchange::Bitfinex do
     end
 
     it '#process_data creates order' do
-      expect(bitfinex.orderbook).to receive(:create)
+      expect(bitfinex.orderbook).to receive(:update)
       bitfinex.process_data(data_create)
     end
 

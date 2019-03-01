@@ -1,7 +1,7 @@
 describe Arke::Action do
   let(:type)   { :create_order }
   let(:dest)   { :bitfaker }
-  let(:params) { Arke::Order.new(1, 'ethusd', 1, 1, :buy) }
+  let(:params) { Arke::Order.new('ethusd', 1, 1, :buy) }
 
   it 'creates istruction' do
     action = Arke::Action.new(type, dest, params)

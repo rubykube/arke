@@ -29,9 +29,9 @@ module Arke
     end
 
     # get with the lowest price
-    # def get(side)
-    #   @book[side]
-    # end
+    def get(side)
+      @book[side].first
+    end
 
     def print(side = :buy)
       header = ['Price', 'Amount']
