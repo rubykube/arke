@@ -36,21 +36,21 @@ module Arke::Exchange
 
     def process_data(data)
       order = build_order(data)
-      if order.price.zero?
+      if data[1].zero?
         @orderbook.delete(order)
       else
-        @orderbook.create(order)
+        @orderbook.update(order)
       end
     end
 
     def build_order(data)
-      id, price, amount = data
+      price, _count, amount = data
       side = :buy
       if amount.negative?
         side = :sell
         amount = amount * -1
       end
-      Arke::Order.new(id, @market, price, amount, side)
+      Arke::Order.new(@market, price, amount, side)
     end
 
     def process_event_message(msg)
@@ -76,8 +76,9 @@ module Arke::Exchange
       sub = {
         event: "subscribe",
         channel: "book",
-        pair: @market,
-        prec: "R0"
+        symbol: @market,
+        prec: "P0",
+        freq: "F0",
       }
 
       Arke::Log.info 'Open event' + sub.to_s
