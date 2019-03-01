@@ -41,10 +41,10 @@ module Arke::Exchange
     end
 
     def add_order(order)
-      id, price, amount = order
+      _id, price, amount = order
       side = (amount.negative?) ? :sell : :buy
       amount = amount.abs
-      @orderbook.create(Arke::Order.new(id, @market, price, amount, side))
+      @orderbook.update(Arke::Order.new(@market, price, amount, side))
     end
   end
 end

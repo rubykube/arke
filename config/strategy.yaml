@@ -14,9 +14,9 @@ strategy:
       key: ""
       secret: ""
       rate_limit: 0.2
-#    - driver: bitfinex
-#      market: 'tETHUSD'
-#      host: "api.bitfinex.com"
-#      key: ""
-#      secret: ""
-#      rate_limit: 0.2
+    - driver: bitfinex
+      market: 'tETHUSD'
+      host: "api.bitfinex.com"
+      key: ""
+      secret: ""
+      rate_limit: 0.2
