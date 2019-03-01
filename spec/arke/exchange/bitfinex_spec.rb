@@ -1,6 +1,3 @@
-require 'arke'
-require 'action'
-
 describe Arke::Exchange::Bitfinex do
   let(:config) do
     {

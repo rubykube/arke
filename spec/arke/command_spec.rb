@@ -1,5 +1,3 @@
-require 'arke/command'
-
 describe Arke::Command do
   let(:config) { YAML.load_file('config/strategy.yaml')['strategy'] }
 

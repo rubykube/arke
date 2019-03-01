@@ -1,0 +1,15 @@
+type: copy
+target:
+  driver: bitfaker
+  market: 'ETHUSD'
+  host: "http://www.devkube.com"
+  key: ""
+  secret: ""
+  rate_limit: 0.2
+sources:
+  - driver: bitfaker
+    market: 'ETHUSD'
+    host: "api.bitfinex.com"
+    key: ""
+    secret: ""
+    rate_limit: 0.2
