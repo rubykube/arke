@@ -1,7 +1,4 @@
-require 'spec_helper'
-require 'action'
-
-RSpec.describe Arke::Action do
+describe Arke::Action do
   let(:type)   { :create_order }
   let(:dest)   { :bitfaker }
   let(:params) { Arke::Order.new(1, 'ethusd', 1, 1, :buy) }

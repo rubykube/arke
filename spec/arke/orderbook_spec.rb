@@ -1,8 +1,4 @@
-require 'rbtree'
-require 'orderbook'
-require 'order'
-
-RSpec.describe Arke::Orderbook do
+describe Arke::Orderbook do
   let(:market)     { 'ethusd' }
   let(:orderbook)  { Arke::Orderbook.new('ethusd') }
 

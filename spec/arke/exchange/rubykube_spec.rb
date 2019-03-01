@@ -1,13 +1,4 @@
-require 'securerandom'
-
-require 'configuration'
-require 'strategy'
-require 'order'
-require 'log'
-
-require 'exchange/rubykube'
-
-RSpec.describe Arke::Exchange::Rubykube do
+describe Arke::Exchange::Rubykube do
   include_context 'mocked rubykube'
 
   before(:all) { Arke::Log.define }
