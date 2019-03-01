@@ -18,6 +18,18 @@ $LOAD_PATH << File.expand_path('../lib', __dir__)
 $LOAD_PATH << File.expand_path('../lib/arke', __dir__)
 
 Dir['./spec/support/**/*.rb'].each { |f| require f }
+require 'simplecov'
+
+require 'simplecov-rcov'
+
+SimpleCov.start do
+  add_filter '/spec/'
+end
+
+SimpleCov.formatters = [
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::RcovFormatter
+]
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
