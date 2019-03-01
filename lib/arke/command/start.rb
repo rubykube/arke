@@ -6,7 +6,8 @@ module Arke
 
       def execute
         config = Arke::Configuration.require!(:strategy)
-        pp config['dry'] = dry?
+        config['dry'] = dry?
+        config['target']['driver'] = 'bitfaker' if dry?
         reactor = Arke::Reactor.new(config)
         reactor.run
       end

@@ -30,6 +30,8 @@ module Arke::Exchange
       pp order
     end
 
+    def ping; end
+
     private
 
     def load_orderbook
