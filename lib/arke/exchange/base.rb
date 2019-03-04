@@ -17,5 +17,11 @@ module Arke::Exchange
       rate_limit = 1.0 if rate_limit <= 0
       @min_delay = 1.0 / rate_limit
     end
+
+    def build_error(response)
+      JSON.parse(response.body)
+    rescue StandardError => e
+      "Code: #{response.env.status} Message: #{response.env.reason_phrase}"
+    end
   end
 end

@@ -70,25 +70,5 @@ module Arke::Exchange
         'Content-Type' => 'application/json'
       }
     end
-
-    def build_error(response)
-      if valid_json?(response.body)
-        JSON.parse(response.body)
-      else
-        "Code: #{response.env.status} Message: #{response.env.reason_phrase}"
-      end
-    end
-
-    # Helper method, checks for +json+ integrity
-    def valid_json?(json)
-      begin
-        JSON.parse(json)
-        true
-      rescue StandardError => e
-        Arke::Log.error e.message
-        false
-      end
-    end
-
   end
 end

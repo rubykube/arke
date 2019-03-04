@@ -1,10 +1,22 @@
 require 'arke'
 require 'action'
+require 'openssl'
 
 describe Arke::Exchange::Binance do
   include_context 'mocked binance'
 
-  let(:binance) { Arke::Exchange::Binance.new({'market' => 'ethusdt'}) }
+  before(:all) { Arke::Log.define }
+
+  let(:binance) do
+    Arke::Exchange::Binance.new(
+      {
+        'host' => 'api.binance.com',
+        'market' => 'ETHUSDT',
+        'key' => 'Uwg8wqlxueiLCsbTXjlogviL8hdd60',
+        'secret' => 'OwpadzSYOSkzweoJkjPrFeVgjOwOuxVHk8FXIlffdWw'
+      }
+    )
+  end
 
   context 'ojbect initialization' do
     it 'is a sublass of Arke::Exchange::Base' do
@@ -17,13 +29,13 @@ describe Arke::Exchange::Binance do
   end
 
   context 'getting snapshot' do
-    let(:snapshot_buy_order_1) { Arke::Order.new('ethusdt', '135.84000000', '6.62227000', :buy) }
-    let(:snapshot_buy_order_2) { Arke::Order.new('ethusdt', '135.85000000', '0.57176000', :buy) }
-    let(:snapshot_buy_order_3) { Arke::Order.new('ethusdt', '135.87000000', '36.43875000', :buy) }
+    let(:snapshot_buy_order_1) { Arke::Order.new('ETHUSDT', '135.84000000', '6.62227000', :buy) }
+    let(:snapshot_buy_order_2) { Arke::Order.new('ETHUSDT', '135.85000000', '0.57176000', :buy) }
+    let(:snapshot_buy_order_3) { Arke::Order.new('ETHUSDT', '135.87000000', '36.43875000', :buy) }
 
-    let(:snapshot_sell_order_1) { Arke::Order.new('ethusdt', '135.91000000', '0.00070000', :sell) }
-    let(:snapshot_sell_order_2) { Arke::Order.new('ethusdt', '135.93000000', '8.00000000', :sell) }
-    let(:snapshot_sell_order_3) { Arke::Order.new('ethusdt', '135.95000000', '1.11699000', :sell) }
+    let(:snapshot_sell_order_1) { Arke::Order.new('ETHUSDT', '135.91000000', '0.00070000', :sell) }
+    let(:snapshot_sell_order_2) { Arke::Order.new('ETHUSDT', '135.93000000', '8.00000000', :sell) }
+    let(:snapshot_sell_order_3) { Arke::Order.new('ETHUSDT', '135.95000000', '1.11699000', :sell) }
 
     it 'gets a snapshot' do
       binance.get_snapshot
@@ -53,14 +65,14 @@ describe Arke::Exchange::Binance do
         })
     end
 
-    let(:example_messsage_buy_order_1) { Arke::Order.new('ethusdt', '136.07000000', '29.38270000', :buy) }
-    let(:example_messsage_buy_order_2) { Arke::Order.new('ethusdt', '136.43000000', '0.66174000', :buy) }
+    let(:example_messsage_buy_order_1) { Arke::Order.new('ETHUSDT', '136.07000000', '29.38270000', :buy) }
+    let(:example_messsage_buy_order_2) { Arke::Order.new('ETHUSDT', '136.43000000', '0.66174000', :buy) }
 
-    let(:example_messsage_sell_order_1) { Arke::Order.new('ethusdt', '136.44000000', '5.15285000', :sell) }
-    let(:example_messsage_sell_order_2) { Arke::Order.new('ethusdt', '136.45000000', '165.29973000', :sell) }
-    let(:example_messsage_sell_order_3) { Arke::Order.new('ethusdt', '136.50000000', '0.16122000', :sell) }
-    let(:example_messsage_sell_order_4) { Arke::Order.new('ethusdt', '136.51000000', '0.93508000', :sell) }
-    let(:example_messsage_sell_order_5) { Arke::Order.new('ethusdt', '136.52000000', '25.20000000', :sell) }
+    let(:example_messsage_sell_order_1) { Arke::Order.new('ETHUSDT', '136.44000000', '5.15285000', :sell) }
+    let(:example_messsage_sell_order_2) { Arke::Order.new('ETHUSDT', '136.45000000', '165.29973000', :sell) }
+    let(:example_messsage_sell_order_3) { Arke::Order.new('ETHUSDT', '136.50000000', '0.16122000', :sell) }
+    let(:example_messsage_sell_order_4) { Arke::Order.new('ETHUSDT', '136.51000000', '0.93508000', :sell) }
+    let(:example_messsage_sell_order_5) { Arke::Order.new('ETHUSDT', '136.52000000', '25.20000000', :sell) }
 
     it 'parses message and fills orderbook with data from it' do
       binance.on_message(example_message)
@@ -103,6 +115,44 @@ describe Arke::Exchange::Binance do
         binance.on_message(example_message)
         expect{ binance.process(price_level_to_remove, :buy) }.to change{ binance.orderbook.contains?(order_to_remove) }.from(true).to(false)
       end
+    end
+  end
+
+  context 'order_create' do
+    let(:order) { Arke::Order.new('ETHUSDT', '250', '1', :buy) }
+    let(:timestamp) { "1551720218" }
+    let(:query) do
+      "symbol=#{order.market}&side=#{order.side.upcase}&type=LIMIT&timeInForce=GTC&quantity=#{order.amount.to_f}"\
+        "&price=#{order.price.to_f}&recvWindow=5000&timestamp=#{timestamp}"
+    end
+    let(:query_hash) do
+      {
+        symbol: order.market,
+        side: order.side.upcase,
+        type: 'LIMIT',
+        timeInForce: 'GTC',
+        quantity: order.amount.to_f,
+        price: order.price.to_f,
+        recvWindow: '5000',
+        timestamp: timestamp
+      }
+    end
+    let(:signature) do
+      OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), 'OwpadzSYOSkzweoJkjPrFeVgjOwOuxVHk8FXIlffdWw', query)
+    end
+
+    it 'creates an order on Binance' do
+      expect(binance.create_order(order).status).to eq(200)
+    end
+
+    it 'creates proper signature' do
+      expect(binance.generate_signature(query_hash, timestamp)).to eq(signature)
+    end
+
+    it 'gets 401 on request with wrong api key' do
+      binance.instance_variable_set(:@api_key, SecureRandom.hex)
+
+      expect { binance.create_order(order) }.to output(/Code: 401/).to_stderr_from_any_process
     end
   end
 end

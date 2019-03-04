@@ -1,5 +1,6 @@
 require 'orderbook'
 require 'json'
+require 'openssl'
 
 module Arke::Exchange
   class Binance < Base
@@ -16,6 +17,10 @@ module Arke::Exchange
 
       @orderbook = Arke::Orderbook.new(@market)
       @last_update_id = 0
+      @rest_api_connection = Faraday.new("https://#{opts['host']}") do |builder|
+        builder.adapter :em_synchrony
+        builder.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+      end
     end
 
     # TODO: remove EM (was used only for debug)
@@ -64,6 +69,47 @@ module Arke::Exchange
       @last_update_id = snapshot['lastUpdateId']
       process(snapshot['bids'], :buy)
       process(snapshot['asks'], :sell)
+    end
+
+    def create_order(order)
+      timestamp = Time.now.to_i * 1000
+      body = {
+        symbol: @market.upcase,
+        side: order.side.upcase,
+        type: 'LIMIT',
+        timeInForce: 'GTC',
+        quantity: order.amount.to_f,
+        price: order.price.to_f,
+        recvWindow: '5000',
+        timestamp: timestamp
+      }
+
+      post('api/v3/order', body)
+    end
+
+    def generate_signature(data, timestamp)
+      query = ""
+      data.each { |key, value| query << "#{key}=#{value}&" }
+      OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), @secret, query.chomp('&'))
+    end
+
+    private
+
+    def post(path, params = nil)
+      request = @rest_api_connection.post(path) do |req|
+        req.headers['X-MBX-APIKEY'] = @api_key
+        req.body = URI.encode_www_form(generate_body(params))
+      end
+
+      Arke::Log.fatal(build_error(request)) if request.env.status != 200
+      request
+    end
+
+    def generate_body(data)
+      query = ""
+      data.each { |key, value| query << "#{key}=#{value}&" }
+      sig = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), @secret, query.chomp('&'))
+      data.merge(signature: sig)
     end
   end
 end

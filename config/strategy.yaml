@@ -20,3 +20,9 @@ strategy:
       key: ""
       secret: ""
       rate_limit: 0.2
+    - driver: binance
+      market: 'ETHUSDT'
+      host: "api.binance.com"
+      key: ""
+      secret: ""
+      rate_limit: 0.2
