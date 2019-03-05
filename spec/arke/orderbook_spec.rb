@@ -1,6 +1,6 @@
 describe Arke::Orderbook do
   let(:market)     { 'ethusd' }
-  let(:orderbook)  { Arke::Orderbook.new('ethusd') }
+  let(:orderbook)  { Arke::Orderbook.new(market) }
 
   it 'creates orderbook' do
     orderbook = Arke::Orderbook.new(market)
@@ -10,9 +10,9 @@ describe Arke::Orderbook do
   end
 
   context 'orderbook#add' do
-    let(:order_buy)   { Arke::Order.new('ethusd', 1, 1, :buy) }
-    let(:order_sell)  { Arke::Order.new('ethusd', 1, 1, :sell) }
-    let(:order_sell2) { Arke::Order.new('ethusd', 1, 1, :sell) }
+    let(:order_buy)   { Arke::Order.new(market, 1, 1, :buy) }
+    let(:order_sell)  { Arke::Order.new(market, 1, 1, :sell) }
+    let(:order_sell2) { Arke::Order.new(market, 1, 1, :sell) }
 
     it 'adds buy order to orderbook' do
       orderbook.update(order_buy)
@@ -37,8 +37,8 @@ describe Arke::Orderbook do
   end
 
   context 'orderbook#contains?' do
-    let(:order0) { Arke::Order.new('ethusd', 5, 1, :buy) }
-    let(:order1) { Arke::Order.new('ethusd', 8, 1, :buy) }
+    let(:order0) { Arke::Order.new(market, 5, 1, :buy) }
+    let(:order1) { Arke::Order.new(market, 8, 1, :buy) }
 
     it 'returns true if order is in orderbook' do
       orderbook.update(order0)
@@ -57,7 +57,6 @@ describe Arke::Orderbook do
     let(:order_sell_0)     { Arke::Order.new('ethusd', 5, 1, :sell) }
     let(:order_sell_1)     { Arke::Order.new('ethusd', 8, 1, :sell) }
     let(:order_sell_cheap) { Arke::Order.new('ethusd', 2, 1, :sell) }
-
     let(:order_buy_0)         { Arke::Order.new('ethusd', 5, 1, :buy) }
     let(:order_buy_1)         { Arke::Order.new('ethusd', 8, 1, :buy) }
     let(:order_buy_expensive) { Arke::Order.new('ethusd', 9, 1, :buy) }
@@ -80,12 +79,12 @@ describe Arke::Orderbook do
   end
 
   context 'orderbook#remove' do
-    let(:order_buy)   { Arke::Order.new('ethusd', 1, 1, :buy) }
+    let(:order_buy)   { Arke::Order.new(market, 1, 1, :buy) }
 
     it 'removes correct order from orderbook' do
       orderbook.update(order_buy)
-      orderbook.update(Arke::Order.new('ethusd', order_buy.price, 1, :buy))
-      orderbook.update(Arke::Order.new('ethusd', 11, 1, :sell))
+      orderbook.update(Arke::Order.new(market, order_buy.price, 1, :buy))
+      orderbook.update(Arke::Order.new(market, 11, 1, :sell))
 
       orderbook.delete(order_buy)
 
@@ -97,11 +96,35 @@ describe Arke::Orderbook do
     it 'does nothing if non existing id' do
       orderbook.update(order_buy)
 
-      orderbook.delete(Arke::Order.new('ethusd', 10, 1, :buy))
+      orderbook.delete(Arke::Order.new(market, 10, 1, :buy))
 
       expect(orderbook.book[:buy]).not_to be_nil
       expect(orderbook.contains?(order_buy)).to eq(true)
     end
   end
 
+  context 'orderbook#merge' do
+    let(:ob1) { Arke::Orderbook.new(market) }
+    let(:ob2) { Arke::Orderbook.new(market) }
+    let(:ob3) { Arke::Orderbook.new(market) }
+
+    it 'merges two orderbooks into one' do
+      ob1.update(Arke::Order.new(market, 10, 10, :sell))
+      ob1.update(Arke::Order.new(market, 20, 15, :sell))
+      ob1.update(Arke::Order.new(market, 25, 5, :sell))
+
+      ob2.update(Arke::Order.new(market, 10, 30, :sell))
+      ob2.update(Arke::Order.new(market, 20, 20, :sell))
+      ob2.update(Arke::Order.new(market, 10, 10, :buy))
+
+      ob3.update(Arke::Order.new(market, 10, 40, :sell))
+      ob3.update(Arke::Order.new(market, 20, 35, :sell))
+      ob3.update(Arke::Order.new(market, 25, 5, :sell))
+      ob3.update(Arke::Order.new(market, 10, 10, :buy))
+
+      ob1.merge!(ob2)
+
+      expect(ob1.book).to eq(ob3.book)
+    end
+  end
 end
