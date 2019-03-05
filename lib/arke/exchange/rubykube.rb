@@ -1,4 +1,5 @@
 require 'exchange/base'
+require 'open_orders'
 
 module Arke::Exchange
   # This class holds Rubykube Exchange logic implementation
@@ -34,7 +35,8 @@ module Arke::Exchange
           price:  order.price
         }
       )
-      @open_orders[response.env.body['id']] = order if response.env.status == 201 && response.env.body['id']
+      @open_orders.add_order(order, response.env.body['id']) if response.env.status == 201 && response.env.body['id']
+
       response
     end
 

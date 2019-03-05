@@ -2,11 +2,11 @@ strategy:
   type: copy
   target:
     driver: rubykube
-    market: 'ETHUSD'
+    market: 'FTHUSD'
     host: "http://www.devkube.com"
     key: ""
     secret: ""
-    rate_limit: 0.2
+    rate_limit: 1
   sources:
     - driver: bitfaker
       market: 'tETHUSD'

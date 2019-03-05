@@ -14,7 +14,6 @@ module Arke
     def initialize(config)
       @shutdown = false
       @strategy = Arke::Strategy.create(config)
-      @target = Arke::Exchange.create(config['target'])
       @dax = build_dax(config)
 
       trap('INT') { stop }
@@ -25,17 +24,22 @@ module Arke
       config['sources'].each { |ex|
         dax[ex['driver'].to_sym] = Arke::Exchange.create(ex)
       }
+
+      dax[:target] = Arke::Exchange.create(config['target'])
+
       return dax
     end
 
     # * traps SIGINT
     # * strategy execution rate is limited by target's +rate_limit+
     def run
+      min_delay = @dax[:target].min_delay
+
       EM.synchrony do
         @dax.each do |name, exchange|
           Arke::Log.debug "Starting Exchange: #{name}"
 
-          exchange.timer = EM::Synchrony::add_periodic_timer(@target.min_delay) do
+          exchange.timer = EM::Synchrony::add_periodic_timer(min_delay) do
             Arke::Log.debug "Scheduling Action #{Time.now} - Exchange #{name} - Queue size: #{exchange.queue.size}"
             exchange.queue.pop do |action|
               Arke::Log.debug "pop: #{action}"
@@ -46,9 +50,9 @@ module Arke
           exchange.start
         end
 
-        @timer = EM::Synchrony::add_periodic_timer(@target.min_delay) do
+        @timer = EM::Synchrony::add_periodic_timer(min_delay) do
           Arke::Log.debug "Calling Strategy #{Time.now}"
-          @strategy.call(@target, @dax) do |action|
+          @strategy.call(@dax) do |action|
             @dax[action.destination].queue.push(action)
           end
         end
@@ -60,6 +64,7 @@ module Arke
       when :ping
         @target.ping
       when :order_create
+        @dax[action.destination].create_order(action.params[:order])
       when :order_stop
       else
         Arke::Log.error "Unknown Action type: #{action.type}"
