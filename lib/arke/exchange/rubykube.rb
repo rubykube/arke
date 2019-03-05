@@ -25,7 +25,7 @@ module Arke::Exchange
     # Takes +order+ (+Arke::Order+ instance)
     # * creates +order+ via RestApi
     def create_order(order)
-      post(
+      response = post(
         'peatio/market/orders',
         {
           market: order.market.downcase,
@@ -34,6 +34,8 @@ module Arke::Exchange
           price:  order.price
         }
       )
+      @open_orders[response.env.body['id']] = order if response.env.status == 201 && response.env.body['id']
+      response
     end
 
     # Takes +order+ (+Arke::Order+ instance)

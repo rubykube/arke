@@ -2,7 +2,7 @@ module Arke::Exchange
 
   # Base class for all exchanges
   class Base
-    attr_reader :queue, :min_delay
+    attr_reader :queue, :min_delay, :open_orders
     attr_accessor :timer
 
     def initialize(opts)
@@ -16,6 +16,8 @@ module Arke::Exchange
       rate_limit = opts['rate_limit'] || 1.0
       rate_limit = 1.0 if rate_limit <= 0
       @min_delay = 1.0 / rate_limit
+
+      @open_orders = {}
     end
   end
 end

@@ -35,6 +35,13 @@ describe Arke::Exchange::Rubykube do
 
       expect { rubykube.create_order(order) }.to output(/Code: 403/).to_stderr_from_any_process
     end
+
+    it 'updates open_orders after create' do
+      rubykube.create_order(order)
+
+      expect(rubykube.open_orders).not_to be_empty
+      expect(rubykube.open_orders.values).to include(order)
+    end
   end
 
   # context 'rubykube#stop_order' do

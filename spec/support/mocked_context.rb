@@ -21,7 +21,7 @@ shared_context 'mocked rubykube' do
 
     stub_request(:post, /peatio\/market\/orders/).
     with(headers: authorized_header).
-    to_return(status: 201, body: '', headers: {})
+    to_return(status: 201, body: { id: Random.rand(1...1000) }.to_json, headers: {})
 
     stub_request(:post, /peatio\/market\/orders\/\d+\/cancel/).
     with(headers: authorized_header).
