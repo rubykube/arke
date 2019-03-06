@@ -14,19 +14,18 @@ module Arke::Strategy
 
       sources.each { |_key, source| ob.merge!(source.orderbook) }
 
-      diff = dax[:target].open_orders.compare(ob)
+      #ob.sacling
+
+      diff = dax[:target].open_orders.get_diff(ob)
 
       [:buy, :sell].each do |side|
         create = diff[:create][side]
         delete = diff[:delete][side]
-        update = diff[:update][side]
 
         if !create.length.zero?
           yield Arke::Action.new(:order_create, :target, { order: create.first })
         elsif !delete.length.zero?
-          yield Arke::Action.new(:order_stop, :target, { order: delete.first })
-        elsif !update.length.zero?
-          yield Arke::Action.new(:order_stop, :target, { order: update.first })
+          yield Arke::Action.new(:order_stop, :target, { id: delete.first })
         end
       end
     end

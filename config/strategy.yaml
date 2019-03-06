@@ -8,12 +8,12 @@ strategy:
     secret: ""
     rate_limit: 1
   sources:
-    - driver: bitfaker
-      market: 'tETHUSD'
-      host: "api.bitfinex.com"
-      key: ""
-      secret: ""
-      rate_limit: 0.2
+    # - driver: bitfaker
+    #   market: 'tETHUSD'
+    #   host: "api.bitfinex.com"
+    #   key: ""
+    #   secret: ""
+    #   rate_limit: 0.2
     - driver: bitfinex
       market: 'tETHUSD'
       host: "api.bitfinex.com"

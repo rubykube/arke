@@ -42,9 +42,9 @@ module Arke::Exchange
 
     # Takes +order+ (+Arke::Order+ instance)
     # * cancels +order+ via RestApi
-    def stop_order(order)
+    def stop_order(id)
       post(
-        "peatio/market/orders/#{order.id}/cancel"
+        "peatio/market/orders/#{id}/cancel"
       )
     end
 

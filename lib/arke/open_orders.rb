@@ -1,12 +1,12 @@
-require 'rbtree'
 require 'order'
 
 module Arke
   class OpenOrders
-    def initialize
+    def initialize(market)
+      @market = market
       @book = {
-        buy: ::RBTree.new,
-        sell: ::RBTree.new
+        buy: {},
+        sell: {}
       }
     end
 
@@ -14,15 +14,20 @@ module Arke
       !@book[side][price].nil?
     end
 
+    def price_amount(side, price)
+      @book[side][price].sum { |_id, order| order.amount }
+    end
+
     def add_order(order, id)
-      @book[order.side][order.price] = { id: id, order: order }
+      @book[order.side][order.price] ||= {}
+      @book[order.side][order.price][id] = order
     end
 
-    def get_id(side, price)
-      @book[side][price][:id]
+    def get_orders(side, price)
+      @book[side][price]
     end
 
-    def compare(orderbook)
+    def get_diff(orderbook)
       diff = {
         create: { buy: [], sell: [] },
         delete: { buy: [], sell: [] },
@@ -35,14 +40,22 @@ module Arke
 
         their.each do |price, amount|
           if !contains?(side, price)
-            diff[:create][side].push(Arke::Order.new('ethusd', price, amount, side))
+            diff[:create][side].push(Arke::Order.new(@market, price, amount, side))
           else
-            diff[:update][side].push({ id: get_id(side, price), order: Arke::Order.new('ethusd', price, amount, side) })
+            our_amount = price_amount(side, price)
+            # creating additioanl order to adjust volume
+            if our_amount < amount
+              diff[:update][side].push(Arke::Order.new(@market, price, amount - our_amount, side))
+            else
+              # to redice we must stop_orders and create new
+            end
           end
         end
 
-        our.each do |_price, info|
-          diff[:delete][side].push(info) if !orderbook.contains?(info[:order])
+        our.each do |_price, hash|
+          hash.each do |id, order|
+            diff[:delete][side].push(id) unless orderbook.contains?(order)
+          end
         end
       end
 
@@ -50,4 +63,3 @@ module Arke
     end
   end
 end
-

@@ -50,7 +50,9 @@ module Arke
           exchange.start
         end
 
-        @timer = EM::Synchrony::add_periodic_timer(min_delay) do
+        # order stacking is a very big issue here, I multiply by 2 because I yield 2 orders
+        # one for buy and one for sell
+        @timer = EM::Synchrony::add_periodic_timer(min_delay * 2) do
           Arke::Log.debug "Calling Strategy #{Time.now}"
           @strategy.call(@dax) do |action|
             @dax[action.destination].queue.push(action)
