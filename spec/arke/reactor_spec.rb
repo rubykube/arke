@@ -4,7 +4,6 @@ describe Arke::Reactor do
 
   it 'inits configuration' do
     expect(reactor.instance_variable_get(:@strategy)).to be_instance_of(Arke::Strategy.strategy_class(config['type']))
-    expect(reactor.instance_variable_get(:@target)).to be_instance_of(Arke::Exchange.exchange_class(config['target']['driver']))
   end
 
   it '#build_dax' do

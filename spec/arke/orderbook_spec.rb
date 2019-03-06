@@ -124,7 +124,8 @@ describe Arke::Orderbook do
 
       ob1.merge!(ob2)
 
-      expect(ob1.book).to eq(ob3.book)
+      expect(ob1.book[:index]).to eq(ob3.book[:index])
+      expect(ob1.book[:sell]).to eq(ob3.book[:sell])
     end
   end
 end

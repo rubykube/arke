@@ -39,8 +39,7 @@ describe Arke::Exchange::Rubykube do
     it 'updates open_orders after create' do
       rubykube.create_order(order)
 
-      expect(rubykube.open_orders).not_to be_empty
-      expect(rubykube.open_orders.values).to include(order)
+      expect(rubykube.open_orders.contains?(order.side, order.price)).to eq(true)
     end
   end
 
