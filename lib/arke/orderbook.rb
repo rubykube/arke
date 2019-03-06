@@ -14,6 +14,7 @@ module Arke
         buy: ::RBTree.new,
         sell: ::RBTree.new
       }
+      @book[:buy].readjust { |a, b| b <=> a }
     end
 
     def update(order)

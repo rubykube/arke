@@ -5,7 +5,8 @@ describe Arke::Orderbook do
   it 'creates orderbook' do
     orderbook = Arke::Orderbook.new(market)
 
-    expect(orderbook.book).to eq({ sell: ::RBTree.new, buy: ::RBTree.new , index: ::RBTree.new })
+    expect(orderbook.book).to include({ sell: ::RBTree.new })
+    expect(orderbook.book).to include({ index: ::RBTree.new })
   end
 
   context 'orderbook#add' do
@@ -53,16 +54,28 @@ describe Arke::Orderbook do
   end
 
   context 'orderbook#get' do
-    let(:order0)      { Arke::Order.new('ethusd', 5, 1, :buy) }
-    let(:order1)      { Arke::Order.new('ethusd', 8, 1, :buy) }
-    let(:order_cheap) { Arke::Order.new('ethusd', 2, 1, :buy) }
+    let(:order_sell_0)     { Arke::Order.new('ethusd', 5, 1, :sell) }
+    let(:order_sell_1)     { Arke::Order.new('ethusd', 8, 1, :sell) }
+    let(:order_sell_cheap) { Arke::Order.new('ethusd', 2, 1, :sell) }
 
-    it 'gets order with the lowest price' do
-      orderbook.update(order0)
-      orderbook.update(order1)
-      orderbook.update(order_cheap)
+    let(:order_buy_0)         { Arke::Order.new('ethusd', 5, 1, :buy) }
+    let(:order_buy_1)         { Arke::Order.new('ethusd', 8, 1, :buy) }
+    let(:order_buy_expensive) { Arke::Order.new('ethusd', 9, 1, :buy) }
 
-      expect(orderbook.get(:buy)[0]).to equal(order_cheap.price)
+    it 'gets order with the lowest price for sell side' do
+      orderbook.update(order_sell_0)
+      orderbook.update(order_sell_1)
+      orderbook.update(order_sell_cheap)
+
+      expect(orderbook.get(:sell)[0]).to equal(order_sell_cheap.price)
+    end
+
+    it 'gets order with the highest price for buy side' do
+      orderbook.update(order_buy_0)
+      orderbook.update(order_buy_1)
+      orderbook.update(order_buy_expensive)
+
+      expect(orderbook.get(:buy)[0]).to equal(order_buy_expensive.price)
     end
   end
 
