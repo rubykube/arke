@@ -8,13 +8,14 @@ module Arke::Strategy
 
     # Processes orders and decides what action should be sent to @target
     def call(dax, &block)
-      Arke::Log.debug 'Copy startegy called'
       ob = Arke::Orderbook.new(dax[:target].market)
       sources = dax.select { |k, _v| k != :target }
 
       sources.each { |_key, source| ob.merge!(source.orderbook) }
 
-      #ob.sacling
+      ob.shift(:buy)
+      ob.shift(:sell)
+      ob.multiply(@volume_scaler)
 
       diff = dax[:target].open_orders.get_diff(ob)
 

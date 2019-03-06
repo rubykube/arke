@@ -68,6 +68,7 @@ module Arke
       when :order_create
         @dax[action.destination].create_order(action.params[:order])
       when :order_stop
+        @dax[action.destination].stop_order(action.params[:id])
       else
         Arke::Log.error "Unknown Action type: #{action.type}"
       end
@@ -80,7 +81,7 @@ module Arke
       puts 'Shutdown trading'
       @shutdown = true
       @timer.cancel
-      @dax.each { |name, exchange| exchange.timer.cancel }
+      @dax.each { |_name, exchange| exchange.timer.cancel }
       EM.stop
     end
   end

@@ -23,10 +23,6 @@ module Arke
       @book[order.side][order.price][id] = order
     end
 
-    def get_orders(side, price)
-      @book[side][price]
-    end
-
     def get_diff(orderbook)
       diff = {
         create: { buy: [], sell: [] },

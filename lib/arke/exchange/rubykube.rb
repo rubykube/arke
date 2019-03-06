@@ -11,8 +11,8 @@ module Arke::Exchange
     def initialize(config)
       super
 
-      @connection = Faraday.new(config['host']) do |builder|
-        builder.response :logger
+      @connection = Faraday.new("#{config['host']}/api/v2") do |builder|
+        # builder.response :logger
         builder.response :json
         builder.adapter :em_synchrony
       end
@@ -20,7 +20,7 @@ module Arke::Exchange
 
     # Ping the api
     def ping
-      @connection.get '/api/v2/barong/identity/ping'
+      @connection.get '/barong/identity/ping'
     end
 
     # Takes +order+ (+Arke::Order+ instance)

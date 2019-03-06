@@ -1,5 +1,7 @@
 strategy:
   type: copy
+  volume_scaler: 0.1
+  spread: 0.05
   target:
     driver: rubykube
     market: 'FTHUSD'
