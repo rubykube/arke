@@ -1,6 +1,6 @@
 strategy:
   type: copy
-  volume_scaler: 0.1
+  volume_ratio: 0.1
   target:
     driver: rubykube
     market: 'FTHUSD'

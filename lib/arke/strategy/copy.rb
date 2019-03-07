@@ -23,7 +23,7 @@ module Arke::Strategy
 
         if !create.length.zero?
           order = create.first
-          scaled_order = Arke::Order.new(order.market, order.price, order.amount * @volume_scaler, order.side)
+          scaled_order = Arke::Order.new(order.market, order.price, order.amount * @volume_ratio, order.side)
           yield Arke::Action.new(:order_create, :target, { order: scaled_order })
         elsif !delete.length.zero?
           yield Arke::Action.new(:order_stop, :target, { id: delete.first })
