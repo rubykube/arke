@@ -1,4 +1,5 @@
 require 'exchange/base'
+require 'open_orders'
 
 module Arke::Exchange
   # This class holds Rubykube Exchange logic implementation
@@ -10,8 +11,8 @@ module Arke::Exchange
     def initialize(config)
       super
 
-      @connection = Faraday.new(config['host']) do |builder|
-        builder.response :logger
+      @connection = Faraday.new("#{config['host']}/api/v2") do |builder|
+        # builder.response :logger
         builder.response :json
         builder.adapter :em_synchrony
       end
@@ -19,7 +20,7 @@ module Arke::Exchange
 
     # Ping the api
     def ping
-      @connection.get '/api/v2/barong/identity/ping'
+      @connection.get '/barong/identity/ping'
     end
 
     # Takes +order+ (+Arke::Order+ instance)
@@ -34,15 +35,16 @@ module Arke::Exchange
           price:  order.price
         }
       )
-      @open_orders[response.env.body['id']] = order if response.env.status == 201 && response.env.body['id']
+      @open_orders.add_order(order, response.env.body['id']) if response.env.status == 201 && response.env.body['id']
+
       response
     end
 
     # Takes +order+ (+Arke::Order+ instance)
     # * cancels +order+ via RestApi
-    def stop_order(order)
+    def stop_order(id)
       post(
-        "peatio/market/orders/#{order.id}/cancel"
+        "peatio/market/orders/#{id}/cancel"
       )
     end
 

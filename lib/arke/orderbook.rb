@@ -47,5 +47,11 @@ module Arke
     def [](side)
       @book[side]
     end
+
+    def merge!(ob)
+      @book.each do |k, _v|
+        @book[k].merge!(ob[k]) { |_price, amount, ob_amount| amount + ob_amount }
+      end
+    end
   end
 end

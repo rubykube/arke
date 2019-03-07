@@ -7,17 +7,27 @@ module Arke::Strategy
   class Copy < Base
 
     # Processes orders and decides what action should be sent to @target
-    def call(target, dax, &block)
-      Arke::Log.debug 'Copy startegy called'
-      dax.each do |name, ex|
-        puts ex.print
-        yield Arke::Action.new(:ping, name, { exchange: 'target' })
-        ex.orderbook[:buy].each { |order|
-          yield Arke::Action.new(:order_create, name, { exchange: 'target', order: order })
-        }
-        ex.orderbook[:sell].each { |order|
-          yield Arke::Action.new(:order_create, name, { exchange: 'target', order: order })
-        }
+    def call(dax, &block)
+      ob = Arke::Orderbook.new(dax[:target].market)
+      sources = dax.select { |k, _v| k != :target }
+
+      sources.each { |_key, source| ob.merge!(source.orderbook) }
+      ob.book[:buy].shift
+      ob.book[:sell].shift
+
+      diff = dax[:target].open_orders.get_diff(ob)
+
+      [:buy, :sell].each do |side|
+        create = diff[:create][side]
+        delete = diff[:delete][side]
+
+        if !create.length.zero?
+          order = create.first
+          scaled_order = Arke::Order.new(order.market, order.price, order.amount * @volume_ratio, order.side)
+          yield Arke::Action.new(:order_create, :target, { order: scaled_order })
+        elsif !delete.length.zero?
+          yield Arke::Action.new(:order_stop, :target, { id: delete.first })
+        end
       end
     end
   end

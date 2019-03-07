@@ -66,12 +66,6 @@ module Arke::Exchange
       end
     end
 
-    def print
-      puts "Exchange #{@driver} market: #{@market}"
-      puts @orderbook.print(:buy)
-      puts @orderbook.print(:sell)
-    end
-
     def on_open(e)
       sub = {
         event: "subscribe",
