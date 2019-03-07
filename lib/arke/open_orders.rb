@@ -40,10 +40,8 @@ module Arke
           else
             our_amount = price_amount(side, price)
             # creating additioanl order to adjust volume
-            if our_amount < amount
+            if our_amount != amount
               diff[:update][side].push(Arke::Order.new(@market, price, amount - our_amount, side))
-            else
-              # to redice we must stop_orders and create new
             end
           end
         end
