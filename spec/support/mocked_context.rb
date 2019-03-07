@@ -31,6 +31,12 @@ end
 
 shared_context 'mocked binance' do
   before(:each) do
+    @authorized_api_key = 'Uwg8wqlxueiLCsbTXjlogviL8hdd60'
+    authorized_headers = { 'X-MBX-APIKEY' => @authorized_api_key, 'Content-Type' => 'application/x-www-form-urlencoded' }
+
+    stub_request(:post, 'https://api.binance.com/api/v3/order').
+    to_return(status: 401, body: 'Unauthorized', headers: {})
+
     stub_request(:get, "https://www.binance.com/api/v1/depth?symbol=ETHUSDT&limit=1000").
     to_return(
       status: 200,
@@ -41,5 +47,9 @@ shared_context 'mocked binance' do
       }.to_json,
       headers: {}
     )
+
+    stub_request(:post, 'https://api.binance.com/api/v3/order').
+    with(headers: authorized_headers).
+    to_return(status: 200, body: '', headers: {})
   end
 end

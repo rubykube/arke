@@ -19,5 +19,11 @@ module Arke::Exchange
 
       @open_orders = {}
     end
+
+    def build_error(response)
+      JSON.parse(response.body)
+    rescue StandardError => e
+      "Code: #{response.env.status} Message: #{response.env.reason_phrase}"
+    end
   end
 end
