@@ -12,10 +12,8 @@ module Arke::Strategy
       sources = dax.select { |k, _v| k != :target }
 
       sources.each { |_key, source| ob.merge!(source.orderbook) }
-
-      ob.shift(:buy)
-      ob.shift(:sell)
-      ob.multiply(@volume_scaler)
+      ob.book[:buy].shift
+      ob.book[:sell].shift
 
       diff = dax[:target].open_orders.get_diff(ob)
 
@@ -24,7 +22,9 @@ module Arke::Strategy
         delete = diff[:delete][side]
 
         if !create.length.zero?
-          yield Arke::Action.new(:order_create, :target, { order: create.first })
+          order = create.first
+          scaled_order = Arke::Order.new(order.market, order.price, order.amount * @volume_scaler, order.side)
+          yield Arke::Action.new(:order_create, :target, { order: scaled_order })
         elsif !delete.length.zero?
           yield Arke::Action.new(:order_stop, :target, { id: delete.first })
         end

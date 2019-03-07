@@ -20,6 +20,15 @@ module Arke::Exchange
       @open_orders = Arke::OpenOrders.new(@market)
     end
 
+    def start; end
+
+    def print
+      return unless @orderbook
+      puts "Exchange #{@driver} market: #{@market}"
+      puts @orderbook.print(:buy)
+      puts @orderbook.print(:sell)
+    end
+
     def build_error(response)
       JSON.parse(response.body)
     rescue StandardError => e

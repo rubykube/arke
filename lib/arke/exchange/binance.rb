@@ -58,8 +58,8 @@ module Arke::Exchange
     def build_order(data, side)
       Arke::Order.new(
         @market,
-        data[0],
-        data[1],
+        data[0].to_f,
+        data[1].to_f,
         side
       )
     end

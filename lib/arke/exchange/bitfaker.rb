@@ -16,12 +16,6 @@ module Arke::Exchange
       load_orderbook
     end
 
-    def print
-      puts "Exchange #{@driver} market: #{@market}"
-      puts @orderbook.print(:buy)
-      puts @orderbook.print(:sell)
-    end
-
     def create_order(order)
       pp order
     end
