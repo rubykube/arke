@@ -20,6 +20,7 @@ module Arke::Strategy
       [:buy, :sell].each do |side|
         create = diff[:create][side]
         delete = diff[:delete][side]
+        update = diff[:update][side]
 
         if !create.length.zero?
           order = create.first
@@ -27,6 +28,12 @@ module Arke::Strategy
           yield Arke::Action.new(:order_create, :target, { order: scaled_order })
         elsif !delete.length.zero?
           yield Arke::Action.new(:order_stop, :target, { id: delete.first })
+        elsif !update.length.zero?
+          order = update.first
+          if order.amount > 0
+            scaled_order = Arke::Order.new(order.market, order.price, order.amount * @volume_ratio, order.side)
+            yield Arke::Action.new(:order_create, :target, { order: scaled_order })
+          end
         end
       end
     end

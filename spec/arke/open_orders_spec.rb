@@ -26,6 +26,22 @@ describe Arke::OpenOrders do
     expect(open_orders.contains?(order.side, order.price + 100)).to eq(false)
   end
 
+  it '#remove_order' do
+    order = skip_order[:order]
+    open_orders.add_order(order, skip_order[:id])
+    expect(open_orders.contains?(order.side, order.price)).to eq(true)
+    open_orders.remove_order(skip_order[:id])
+    expect(open_orders.contains?(order.side, order.price)).to eq(false)
+  end
+
+  it '#price_amount' do
+    order = skip_order[:order]
+    open_orders.add_order(order, 33)
+    open_orders.add_order(order, 34)
+
+    expect(open_orders.price_amount(order.side, order.price)).to eq(2 * order.amount)
+  end
+
   context 'open_orders#get_diff' do
     it 'return correct diff' do
       open_orders.add_order(delete_order[:order], delete_order[:id])

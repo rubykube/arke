@@ -11,7 +11,7 @@ module Arke
     end
 
     def contains?(side, price)
-      !@book[side][price].nil?
+      !(@book[side][price].nil? || @book[side][price].empty?)
     end
 
     def price_amount(side, price)
@@ -21,6 +21,11 @@ module Arke
     def add_order(order, id)
       @book[order.side][order.price] ||= {}
       @book[order.side][order.price][id] = order
+    end
+
+    def remove_order(id)
+      @book[:sell].each { |k , v| v.delete(id)}
+      @book[:buy].each { |k, v| v.delete(id)}
     end
 
     def get_diff(orderbook)

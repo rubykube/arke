@@ -43,9 +43,12 @@ module Arke::Exchange
     # Takes +order+ (+Arke::Order+ instance)
     # * cancels +order+ via RestApi
     def stop_order(id)
-      post(
+      response = post(
         "peatio/market/orders/#{id}/cancel"
       )
+      @open_orders.remove_order(id)
+
+      response
     end
 
     private
