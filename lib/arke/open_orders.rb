@@ -10,6 +10,10 @@ module Arke
       }
     end
 
+    def price_level(side, price)
+      @book[side][price]
+    end
+
     def contains?(side, price)
       !(@book[side][price].nil? || @book[side][price].empty?)
     end

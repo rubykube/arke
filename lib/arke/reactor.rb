@@ -40,8 +40,8 @@ module Arke
           Arke::Log.debug "Starting Exchange: #{name}"
 
           exchange.timer = EM::Synchrony::add_periodic_timer(exchange.min_delay) do
-            Arke::Log.debug "Scheduling Action #{Time.now} - Exchange #{name} Delay #{exchange.min_delay} - Queue size: #{exchange.queue.size}"
             exchange.queue.pop do |action|
+              Arke::Log.debug "Scheduling Action #{Time.now} - Exchange #{name} Delay #{exchange.min_delay} - Queue size: #{exchange.queue.size}"
               Arke::Log.debug "pop: #{action}"
               schedule(action)
             end

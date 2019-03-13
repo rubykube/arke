@@ -12,24 +12,33 @@ module Arke::Strategy
       ob = merge_orderbooks(sources, dax[:target].market)
       ob = scale_amounts(ob)
 
-      diff = dax[:target].open_orders.get_diff(ob)
+      open_orders = dax[:target].open_orders
+      diff = open_orders.get_diff(ob)
 
       [:buy, :sell].each do |side|
         create = diff[:create][side]
         delete = diff[:delete][side]
         update = diff[:update][side]
 
+
         if !create.length.zero?
           order = create.first
-          scaled_order = Arke::Order.new(order.market, order.price, order.amount, order.side)
-          yield Arke::Action.new(:order_create, :target, { order: scaled_order })
+          yield Arke::Action.new(:order_create, :target, { order: order })
         elsif !delete.length.zero?
           yield Arke::Action.new(:order_stop, :target, { id: delete.first })
         elsif !update.length.zero?
           order = update.first
-          if order.amount > 0
-            scaled_order = Arke::Order.new(order.market, order.price, order.amount, order.side)
-            yield Arke::Action.new(:order_create, :target, { order: scaled_order })
+          if order.amount > 0.0
+            yield Arke::Action.new(:order_create, :target, { order: order })
+          else
+            new_amount = open_orders.price_amount(side, order.price) + order.amount
+            new_order = Arke::Order.new(order.market, order.price, new_amount, order.side)
+
+            open_orders.price_level(side, order.price).each do |id, _ord|
+              yield Arke::Action.new(:order_stop, :target, { id: id })
+            end
+
+            yield Arke::Action.new(:order_create, :target, { order: new_order })
           end
         end
       end
