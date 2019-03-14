@@ -5,7 +5,7 @@ require 'order'
 module Arke
   class Orderbook
 
-    attr_reader :book
+    attr_reader :book, :market
 
     def initialize(market)
       @market = market
@@ -15,6 +15,13 @@ module Arke
         sell: ::RBTree.new
       }
       @book[:buy].readjust { |a, b| b <=> a }
+    end
+
+    def clone
+      ob = Orderbook.new(@market)
+      ob.merge!(self)
+
+      ob
     end
 
     def update(order)

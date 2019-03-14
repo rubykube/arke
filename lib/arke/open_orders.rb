@@ -10,8 +10,12 @@ module Arke
       }
     end
 
+    def price_level(side, price)
+      @book[side][price]
+    end
+
     def contains?(side, price)
-      !@book[side][price].nil?
+      !(@book[side][price].nil? || @book[side][price].empty?)
     end
 
     def price_amount(side, price)
@@ -21,6 +25,11 @@ module Arke
     def add_order(order, id)
       @book[order.side][order.price] ||= {}
       @book[order.side][order.price][id] = order
+    end
+
+    def remove_order(id)
+      @book[:sell].each { |k , v| v.delete(id)}
+      @book[:buy].each { |k, v| v.delete(id)}
     end
 
     def get_diff(orderbook)
@@ -40,10 +49,8 @@ module Arke
           else
             our_amount = price_amount(side, price)
             # creating additioanl order to adjust volume
-            if our_amount < amount
+            if our_amount != amount
               diff[:update][side].push(Arke::Order.new(@market, price, amount - our_amount, side))
-            else
-              # to redice we must stop_orders and create new
             end
           end
         end

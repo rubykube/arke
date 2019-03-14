@@ -33,15 +33,15 @@ module Arke
     # * traps SIGINT
     # * strategy execution rate is limited by target's +rate_limit+
     def run
-      min_delay = @dax[:target].min_delay
+      strategy_delay = @dax.collect { |_k, v| v.min_delay }.min
 
       EM.synchrony do
         @dax.each do |name, exchange|
           Arke::Log.debug "Starting Exchange: #{name}"
 
-          exchange.timer = EM::Synchrony::add_periodic_timer(min_delay) do
-            Arke::Log.debug "Scheduling Action #{Time.now} - Exchange #{name} - Queue size: #{exchange.queue.size}"
+          exchange.timer = EM::Synchrony::add_periodic_timer(exchange.min_delay) do
             exchange.queue.pop do |action|
+              Arke::Log.debug "Scheduling Action #{Time.now} - Exchange #{name} Delay #{exchange.min_delay} - Queue size: #{exchange.queue.size}"
               Arke::Log.debug "pop: #{action}"
               schedule(action)
             end
@@ -52,12 +52,21 @@ module Arke
 
         # order stacking is a very big issue here, I multiply by 2 because I yield 2 orders
         # one for buy and one for sell
-        @timer = EM::Synchrony::add_periodic_timer(min_delay * 2) do
-          Arke::Log.debug "Calling Strategy #{Time.now}"
-          @strategy.call(@dax) do |action|
-            @dax[action.destination].queue.push(action)
-          end
+        @timer = EM::Synchrony::add_periodic_timer(strategy_delay) do
+          execute_strategy if queues_empty?
         end
+      end
+    end
+
+    def queues_empty?
+      queue_sizes = @dax.collect { |_k, v| v.queue.size }
+      queue_sizes.max.zero?
+    end
+
+    def execute_strategy
+      Arke::Log.debug "Calling Strategy #{Time.now}"
+      @strategy.call(@dax) do |action|
+        @dax[action.destination].queue.push(action)
       end
     end
 
