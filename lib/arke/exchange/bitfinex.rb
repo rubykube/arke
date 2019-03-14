@@ -1,21 +1,19 @@
-# encoding: UTF-8
-# frozen_string_literal: true
-
-require 'pp'
 require 'faye/websocket'
 require 'eventmachine'
 require 'json'
-
-require_relative '../order'
-require_relative '../price_level'
-require_relative '../orderbook'
+require 'exchange/base'
+require 'orderbook'
 
 module Arke::Exchange
-  class Bitfinex
+  class Bitfinex < Base
 
-    def initialize(strategy)
-      @url = 'wss://api.bitfinex.com/ws/2'
-      @strategy = strategy
+    attr_reader :orderbook
+
+    def initialize(opts)
+      super
+
+      @url = 'wss://%s/ws/2' % opts['host']
+      @orderbook = Arke::Orderbook.new(@market)
     end
 
     def process_message(msg)
@@ -30,28 +28,36 @@ module Arke::Exchange
       data = msg[1]
 
       if data.length == 3
-        update_order(data)
+        process_data(data)
       elsif data.length > 3
-        data.each { |order| update_order(order) }
+        data.each { |order| process_data(order) }
       end
     end
 
-    def update_order(data)
-      id, price, amount = data
-      order = Arke::Order.new(id, @strategy.pair, price, amount)
-
-      if price.zero?
-        @strategy.on_order_stop(order)
+    def process_data(data)
+      order = build_order(data)
+      if data[1].zero?
+        @orderbook.delete(order)
       else
-        @strategy.on_order_create(order)
+        @orderbook.update(order)
       end
+    end
+
+    def build_order(data)
+      price, _count, amount = data
+      side = :buy
+      if amount.negative?
+        side = :sell
+        amount = amount * -1
+      end
+      Arke::Order.new(@market, price, amount, side)
     end
 
     def process_event_message(msg)
       case msg['event']
       when 'auth'
       when 'subscribed'
-        handle_subscribed_event(msg)
+        Arke::Log.info "Event: #{msg['event']}"
       when 'unsubscribed'
       when 'info'
       when 'conf'
@@ -60,22 +66,16 @@ module Arke::Exchange
       end
     end
 
-    def handle_subscribed_event(msg)
-      # @map[msg['chanId']] = {
-        # info: msg,
-        # book: Arke::Orderbook.new(msg['pair'])
-      # }
-    end
-
     def on_open(e)
-      Arke::Log.info 'Open event'
       sub = {
         event: "subscribe",
         channel: "book",
-        pair: @strategy.pair,
-        prec: "R0"
+        symbol: @market,
+        prec: "P0",
+        freq: "F0",
       }
 
+      Arke::Log.info 'Open event' + sub.to_s
       EM.next_tick {
         @ws.send(JSON.generate(sub))
       }
@@ -106,8 +106,5 @@ module Arke::Exchange
       end
     end
 
-    def print
-      @map.each { |item| pp item }
-    end
   end
 end

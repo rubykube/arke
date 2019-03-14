@@ -1,51 +1,75 @@
-require 'exchange'
+require 'action'
 
 module Arke::Strategy
-  class Copy
-    attr_reader :pair, :target
+  # This class implements basic copy strategy behaviour
+  # * aggreagates orders from sources
+  # * push order to target
+  class Copy < Base
 
-    def initialize
-      @target = Arke::Configuration.require!(:target)
-      @pair = Arke::Configuration.require!(:pair)
-      @orderbook = Arke::Orderbook.new(@pair)
-    end
+    # Processes orders and decides what action should be sent to @target
+    def call(dax, &block)
+      sources = dax.select { |k, _v| k != :target }
+      ob = merge_orderbooks(sources, dax[:target].market)
+      ob = scale_amounts(ob)
 
-    def on_order_create(order)
-      @orderbook.add(order)
-    end
+      open_orders = dax[:target].open_orders
+      diff = open_orders.get_diff(ob)
 
-    def on_order_stop(order)
-      @orderbook.remove(order.id)
-    end
+      [:buy, :sell].each do |side|
+        create = diff[:create][side]
+        delete = diff[:delete][side]
+        update = diff[:update][side]
 
-    def start
-      target_exchange = @target['driver'].new(self)
 
-      EM.run do
-        Arke::Configuration.get(:sources).each do |source|
-          EM.run do
-            exchange = source['driver'].new(self)
-            exchange.start
-          end
-        end
-
-        process_orders = proc do |order|
-          if @orderbook.nil? || @orderbook.empty? || order.nil?
-            EM.add_timer(1) { @orderbook.orders_queue.pop(&process_orders) }
+        if !create.length.zero?
+          order = create.first
+          yield Arke::Action.new(:order_create, :target, { order: order })
+        elsif !delete.length.zero?
+          yield Arke::Action.new(:order_stop, :target, { id: delete.first })
+        elsif !update.length.zero?
+          order = update.first
+          if order.amount > 0.0
+            yield Arke::Action.new(:order_create, :target, { order: order })
           else
-            Arke::Log.info("Order: #{order}")
-            sleep(0.5)
-            target_exchange.create_order(order)
-            @orderbook.remove(order.id)
-            EM.next_tick { @orderbook.orders_queue.pop(&process_orders) }
+            new_amount = open_orders.price_amount(side, order.price) + order.amount
+            new_order = Arke::Order.new(order.market, order.price, new_amount, order.side)
+
+            open_orders.price_level(side, order.price).each do |id, _ord|
+              yield Arke::Action.new(:order_stop, :target, { id: id })
+            end
+
+            yield Arke::Action.new(:order_create, :target, { order: new_order })
           end
         end
-
-        EM.add_timer(3) { @orderbook.orders_queue.pop(&process_orders) }
-
-        trap('INT') { EM.stop }
-        trap('TERM') { EM.stop }
       end
+    end
+
+    def scale_amounts(orderbook)
+      ob = Arke::Orderbook.new(orderbook.market)
+
+      [:buy, :sell].each do |side|
+        orderbook[side].each do |price, amount|
+          ob[side][price] = amount * @volume_ratio
+        end
+      end
+
+      ob
+    end
+
+    def merge_orderbooks(sources, market)
+      ob = Arke::Orderbook.new(market)
+
+      sources.each do |_key, source|
+        source_book = source.orderbook.clone
+
+        # discarding 1st level
+        source_book[:sell].shift
+        source_book[:buy].shift
+
+        ob.merge!(source_book)
+      end
+
+      ob
     end
   end
 end

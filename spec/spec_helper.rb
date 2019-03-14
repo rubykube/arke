@@ -17,6 +17,24 @@
 $LOAD_PATH << File.expand_path('../lib', __dir__)
 $LOAD_PATH << File.expand_path('../lib/arke', __dir__)
 
+require 'simplecov'
+require 'simplecov-rcov'
+
+SimpleCov.start do
+  add_filter '/spec/'
+  track_files 'lib/**/*.rb'
+end
+
+SimpleCov.formatters = [
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::RcovFormatter
+]
+
+require 'arke'
+require 'arke/command'
+
+require 'pry'
+
 Dir['./spec/support/**/*.rb'].each { |f| require f }
 
 RSpec.configure do |config|
@@ -49,8 +67,6 @@ RSpec.configure do |config|
   # inherited by the metadata hash of host groups and examples, rather than
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
-
-  config.before { allow($stdout).to receive(:puts) }
 
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.

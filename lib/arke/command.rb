@@ -1,8 +1,8 @@
 require 'clamp'
-require 'command/root'
-require 'configuration'
-require 'log'
 require 'yaml'
+
+require 'command/root'
+require 'arke'
 
 module Arke
   module Command
@@ -14,20 +14,9 @@ module Arke
     module_function :run!
 
     def load_configuration
-      strategy = YAML.load_file('config/strategy.yaml')['strategy']
+      config = YAML.load_file('config/strategy.yaml')
 
-      Arke::Configuration.define do |config|
-        config.pair = strategy['pair']
-        config.target = strategy['target']
-        config.target['driver'] = Arke::Exchange.exchange_class(config.target['driver'])
-        config.strategy = Arke::Strategy.create(strategy)
-
-        config.sources = strategy['sources'].collect do |source|
-          source['driver'] = Arke::Exchange.exchange_class(source['driver'])
-
-          source
-        end
-      end
+      Arke::Configuration.define { |c| c.strategy = config['strategy'] }
     end
     module_function :load_configuration
 

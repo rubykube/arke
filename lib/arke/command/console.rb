@@ -1,5 +1,4 @@
 require 'pry'
-require 'arke/strategy'
 
 module Arke
   module Command

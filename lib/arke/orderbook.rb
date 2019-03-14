@@ -1,55 +1,64 @@
-# encoding: UTF-8
-# frozen_string_literal: true
-
 require 'rbtree'
-require_relative 'price_level'
+require 'tty-table'
+require 'order'
 
 module Arke
   class Orderbook
 
+    attr_reader :book, :market
+
     def initialize(market)
       @market = market
-      @orders = {}
-      @orders_queue = EventMachine::Queue.new
       @book = {
-        sell: ::RBTree.new,
-        buy: ::RBTree.new
+        index: ::RBTree.new,
+        buy: ::RBTree.new,
+        sell: ::RBTree.new
       }
+      @book[:buy].readjust { |a, b| b <=> a }
     end
 
-    def empty?
-      @orders.empty?
+    def clone
+      ob = Orderbook.new(@market)
+      ob.merge!(self)
+
+      ob
     end
 
-    def add(order)
-      return if order.nil?
-
-      @orders[order.id] = order
-      @orders_queue.push(order)
-
-      side = @book[order.side]
-      side[order.price] ||= PriceLevel.new(order.price)
-      side[order.price].add order
+    def update(order)
+      @book[order.side][order.price] = order.amount
     end
 
-    def remove(id)
-      order = @orders[id]
-      return if order.nil?
-
-      @book[order.side][order.price].remove(order)
-      @orders.delete(id)
+    def delete(order)
+      @book[order.side].delete(order.price)
     end
 
-    def find(id)
-      @orders[id]
+    def contains?(order)
+      !@book[order.side][order.price].nil?
     end
 
-    def dump
-      @book
+    # get with the lowest price
+    def get(side)
+      @book[side].first
     end
 
-    def orders_queue
-      @orders_queue
+    def print(side = :buy)
+      header = ['Price', 'Amount']
+      rows = []
+      @book[side].each do |price, amount|
+        rows << ['%.6f' % price, '%.6f' % amount]
+      end
+      table = TTY::Table.new header, rows
+      table.render(:ascii, padding: [0, 2], alignment: [:right])
+    end
+
+    def [](side)
+      @book[side]
+    end
+
+    def merge!(ob)
+      @book.each do |k, _v|
+        @book[k].merge!(ob[k]) { |_price, amount, ob_amount| amount + ob_amount }
+      end
     end
   end
 end

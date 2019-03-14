@@ -1,15 +1,29 @@
 strategy:
-  type: 'copy'
-  pair: 'ETHUSD'
+  type: copy
+  volume_ratio: 0.1
   target:
     driver: rubykube
+    market: 'FTHUSD'
     host: "http://www.devkube.com"
-    name: John
     key: ""
     secret: ""
+    rate_limit: 1
   sources:
-    - driver: bitfinex
-      host: ""
-      name: Joe
+    - driver: bitfaker
+      market: 'tETHUSD'
+      host: "api.bitfinex.com"
       key: ""
       secret: ""
+      rate_limit: 0.2
+    - driver: bitfinex
+      market: 'tETHUSD'
+      host: "api.bitfinex.com"
+      key: ""
+      secret: ""
+      rate_limit: 0.2
+    - driver: binance
+      market: 'ETHUSDT'
+      host: "api.binance.com"
+      key: ""
+      secret: ""
+      rate_limit: 0.2

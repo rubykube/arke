@@ -1,10 +1,24 @@
+require 'exchange/base'
 require 'exchange/bitfinex'
 require 'exchange/rubykube'
+require 'exchange/bitfaker'
+require 'exchange/binance'
 
 module Arke
+  # Exchange module, contains Exchanges drivers implementation
   module Exchange
-    def self.exchange_class(type)
-      Arke::Exchange.const_get(type.capitalize)
+    # Fabric method, creates proper Exchange instance
+    # * takes +strategy+ (+Arke::Strategy+) and passes to Exchange initializer
+    # * takes +config+ (hash) and passes to Exchange initializer
+    # * takes +config+ and resolves correct Exchange class with +exchange_class+ helper
+    def self.create(config)
+      exchange_class(config['driver']).new(config)
+    end
+
+    # Takes +dirver+ - +String+
+    # Resolves correct Exchange class by it's name
+    def self.exchange_class(driver)
+      Arke::Exchange.const_get(driver.capitalize)
     end
   end
 end

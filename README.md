@@ -25,12 +25,12 @@ Now you can run Arke using `bin/arke` command.
 
 Arke is a liquidity aggregation tool which supports copy strategy
 
-![ArkeStructure](/home/den/work/rubykube/arke/.assets/ArkeStructure.jpg)Add platform host and credentials to `config/strategy.yaml`
+![ArkeStructure](.assets/ArkeStructure.jpg)Add platform host and credentials to `config/strategy.yaml`
 
 ```yaml
 strategy:
   type: 'copy'
-  pair: 'ETHUSD'
+  market: 'ETHUSD'
   target:
     driver: rubykube
     host: "http://www.example1.com"
@@ -64,17 +64,6 @@ Arke::Configuration.require!(:target)['host']
 #For api key:
 Arke::Configuration.require!(:target)['key']
 Arke::Configuration.require!(:target)['secret']
-```
-To use market API:
-
-```ruby
-market_api = Rubykube::MarketApi.new(
-    Arke::Configuration.require!(:target)['host'],
-    Arke::Configuration.require!(:target)['key'],
-	Arke::Configuration.require!(:target)['secret']
-)
-
-market_api.create_order(order_attrs) # order_attrs - ruby hash with request parameters
 ```
 
 To start trading bot type
