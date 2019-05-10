@@ -1,10 +1,10 @@
-require 'pry'
-
 module Arke
   module Command
     class Console < Clamp::Command
 
       def execute
+        require 'pry'
+
         Pry.hooks.add_hook(:before_session, 'arke_load') do |output, binding, pry|
           output.puts "Arke development console"
         end

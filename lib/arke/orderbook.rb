@@ -1,6 +1,7 @@
 require 'rbtree'
 require 'tty-table'
-require 'order'
+
+require 'arke/order'
 
 module Arke
   class Orderbook

@@ -1,5 +1,5 @@
-require 'strategy/base'
-require 'strategy/copy'
+require 'arke/strategy/base'
+require 'arke/strategy/copy'
 
 module Arke
   # Strategy module, contains Strategy types implementation

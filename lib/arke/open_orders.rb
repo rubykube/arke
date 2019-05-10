@@ -1,4 +1,4 @@
-require 'order'
+require 'arke/order'
 
 module Arke
   class OpenOrders

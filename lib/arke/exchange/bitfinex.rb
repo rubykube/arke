@@ -1,8 +1,8 @@
 require 'faye/websocket'
 require 'eventmachine'
 require 'json'
-require 'exchange/base'
-require 'orderbook'
+require 'arke/exchange/base'
+require 'arke/orderbook'
 
 module Arke::Exchange
   class Bitfinex < Base

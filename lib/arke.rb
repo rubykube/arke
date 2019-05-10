@@ -1,8 +1,7 @@
-require 'configuration'
-require 'log'
-require 'reactor'
-require 'exchange'
-require 'strategy'
+module Arke; end
 
-module Arke
-end
+require 'arke/configuration'
+require 'arke/log'
+require 'arke/reactor'
+require 'arke/exchange'
+require 'arke/strategy'

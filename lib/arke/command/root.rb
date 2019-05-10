@@ -1,6 +1,6 @@
-require 'command/start'
-require 'command/console'
-require 'command/version'
+require 'arke/command/start'
+require 'arke/command/console'
+require 'arke/command/version'
 
 module Arke
   module Command

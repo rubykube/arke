@@ -1,8 +1,8 @@
-require 'exchange/base'
-require 'exchange/bitfinex'
-require 'exchange/rubykube'
-require 'exchange/bitfaker'
-require 'exchange/binance'
+require 'arke/exchange/base'
+require 'arke/exchange/bitfinex'
+require 'arke/exchange/rubykube'
+require 'arke/exchange/bitfaker'
+require 'arke/exchange/binance'
 
 module Arke
   # Exchange module, contains Exchanges drivers implementation

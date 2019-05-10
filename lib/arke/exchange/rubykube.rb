@@ -1,5 +1,5 @@
-require 'exchange/base'
-require 'open_orders'
+require 'arke/exchange/base'
+require 'arke/open_orders'
 
 module Arke::Exchange
   # This class holds Rubykube Exchange logic implementation

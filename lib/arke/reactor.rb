@@ -3,8 +3,8 @@ require 'faraday_middleware'
 require 'em-synchrony'
 require 'em-synchrony/em-http'
 
-require 'exchange'
-require 'strategy'
+require 'arke/exchange'
+require 'arke/strategy'
 
 module Arke
   # Main event ractor loop

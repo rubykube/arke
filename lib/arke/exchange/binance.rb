@@ -1,6 +1,6 @@
-require 'orderbook'
 require 'json'
 require 'openssl'
+require 'arke/orderbook'
 
 module Arke::Exchange
   class Binance < Base

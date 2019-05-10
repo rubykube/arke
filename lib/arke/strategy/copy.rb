@@ -1,4 +1,4 @@
-require 'action'
+require 'arke/action'
 
 module Arke::Strategy
   # This class implements basic copy strategy behaviour
