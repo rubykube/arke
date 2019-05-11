@@ -8,7 +8,6 @@ module Arke
   module Command
     def run!
       load_configuration
-      Arke::Log.define
       Root.run
     end
     module_function :run!
