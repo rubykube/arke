@@ -1,8 +1,3 @@
-require 'rbtree'
-require 'tty-table'
-
-require 'arke/order'
-
 module Arke
   class Orderbook
 

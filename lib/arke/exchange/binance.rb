@@ -1,7 +1,3 @@
-require 'json'
-require 'openssl'
-require 'arke/orderbook'
-
 module Arke::Exchange
   class Binance < Base
     attr_reader :last_update_id
