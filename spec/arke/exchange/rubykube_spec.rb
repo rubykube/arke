@@ -43,6 +43,26 @@ describe Arke::Exchange::Rubykube do
     end
   end
 
+  context 'rubykube#save_opened_orders' do
+    it 'saves opened orders' do
+      rubykube.save_opened_orders
+
+      expect(rubykube.open_orders.contains?(:sell, 138.87)).to eq(true)
+      expect(rubykube.open_orders.contains?(:buy, 233.98)).to eq(true)
+      expect(rubykube.open_orders.contains?(:sell, 138.87)).to eq(true)
+      expect(rubykube.open_orders.contains?(:buy, 138.76)).to eq(true)
+
+    end
+  end
+
+  context 'rubykube#get_balances' do
+    it "get balances of all users accounts" do
+      balances = rubykube.get_balances
+
+      expect(balances.count).to eq 4
+    end
+  end
+
   # context 'rubykube#stop_order' do
   #   it 'sets proper url when stop order' do
   #     response = rubykube.stop_order(order)

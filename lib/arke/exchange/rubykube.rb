@@ -11,10 +11,30 @@ module Arke::Exchange
     def initialize(config)
       super
 
-      @connection = Faraday.new("#{config['host']}/api/v2") do |builder|
+      @url = "ws://www.app.local/api/v2/ranger/private/?stream=order"
+      @connection = Faraday.new(:url => "#{config['host']}/api/v2") do |builder|
         # builder.response :logger
         builder.response :json
         builder.adapter :em_synchrony
+      end
+    end
+
+    def start
+      save_open_orders
+
+      @ws = Faye::WebSocket::Client.new(@url, [], { :headers => generate_headers })
+
+      @ws.on(:open) do |e|
+        p [:open]
+      end
+
+      @ws.on(:message) do |e|
+        on_message(e)
+      end
+
+      @ws.on(:close) do |e|
+        on_close(e)
+        @ws = nil
       end
     end
 
@@ -35,8 +55,6 @@ module Arke::Exchange
           price:  order.price
         }
       )
-      @open_orders.add_order(order, response.env.body['id']) if response.env.status == 201 && response.env.body['id']
-
       response
     end
 
@@ -49,6 +67,23 @@ module Arke::Exchange
       @open_orders.remove_order(id)
 
       response
+    end
+
+    def get_balances
+      response = get('peatio/account/balances')
+      response.body
+    end
+
+    def save_open_orders
+      max_limit = 1000
+
+      total = get('peatio/market/orders', { market: "#{@market.downcase}", limit: 1, page: 1, state: 'wait' }).headers['Total']
+      (total.to_f / max_limit.to_f).ceil.times do |page|
+        response = get('peatio/market/orders', { market: "#{@market.downcase}", limit: max_limit, page: page + 1, state: 'wait' }).body.each do |o|
+          order = Arke::Order.new(o['market'].upcase, o['price'].to_f, o['remaining_volume'].to_f, o['side'].to_sym)
+          @open_orders.add_order(order, o['id'])
+        end
+      end
     end
 
     private
@@ -67,6 +102,15 @@ module Arke::Exchange
       response
     end
 
+    def get(path, params = nil)
+      response = @connection.get do |req|
+        req.headers = generate_headers
+        req.url path, params
+      end
+      Arke::Log.fatal(build_error(response)) if response.env.status != 200
+      response
+    end
+
     # Helper method, generates headers to authenticate with +api_key+
     def generate_headers
       nonce = Time.now.to_i.to_s
@@ -76,6 +120,31 @@ module Arke::Exchange
         'X-Auth-Signature' => OpenSSL::HMAC.hexdigest('SHA256', @secret, nonce + @api_key),
         'Content-Type' => 'application/json'
       }
+    end
+
+    def process_message(msg)
+      if msg['order'] && msg['order']['market'] == @market.downcase
+        ord = msg['order']
+        side = ord['kind'] == 'bid' ? :buy : :sell
+        case ord['state']
+        when 'wait'
+          order = Arke::Order.new(ord['market'].upcase, ord['price'].to_f, ord['remaining_volume'].to_f, side)
+          @open_orders.add_order(order, ord['id'])
+        when 'done'
+          @open_orders.remove_order(ord['id']) if @open_orders.exist?(side, ord['price'].to_f, ord['id'])
+        when 'cancel'
+          @open_orders.remove_order(ord['id']) if @open_orders.exist?(side, ord['price'].to_f, ord['id'])
+        end
+      end
+    end
+
+    def on_message(e)
+      msg = JSON.parse(e.data)
+      process_message(msg)
+    end
+
+    def on_close(e)
+      Arke::Log.info "Closing code: #{e.code} Reason: #{e.reason}"
     end
   end
 end

@@ -14,6 +14,10 @@ module Arke
       @book[side][price]
     end
 
+    def exist?(side, price, id)
+      @book[side][price][id] ? true : false
+    end
+
     def contains?(side, price)
       !(@book[side][price].nil? || @book[side][price].empty?)
     end
