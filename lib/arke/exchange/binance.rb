@@ -25,7 +25,7 @@ module Arke::Exchange
 
     # TODO: remove EM (was used only for debug)
     def start
-      get_snapshot
+      update_orderbook
 
       @ws = Faye::WebSocket::Client.new(@url)
 
@@ -42,19 +42,6 @@ module Arke::Exchange
       process(data['a'], :sell) unless data['a'].empty?
     end
 
-    def process(data, side)
-      data.each do |order|
-        if order[1].to_f.zero?
-          @orderbook.delete(build_order(order, side))
-          next
-        end
-
-        orderbook.update(
-          build_order(order, side)
-        )
-      end
-    end
-
     def build_order(data, side)
       Arke::Order.new(
         @market,
@@ -64,11 +51,19 @@ module Arke::Exchange
       )
     end
 
-    def get_snapshot
+    def update_orderbook
       snapshot = JSON.parse(@connection.get("api/v1/depth?symbol=#{@market.upcase}&limit=1000").body)
-      @last_update_id = snapshot['lastUpdateId']
-      process(snapshot['bids'], :buy)
-      process(snapshot['asks'], :sell)
+      snapshot['bids'].each do |order|
+        @orderbook.update(
+          build_order(order, :buy)
+        )
+      end
+      snapshot['asks'].each do |order|
+        @orderbook.update(
+          build_order(order, :sell)
+        )
+      end
+      @orderbook
     end
 
     def create_order(order)

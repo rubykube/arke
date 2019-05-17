@@ -14,6 +14,9 @@ module Arke::Exchange
 
       @url = 'wss://%s/ws/2' % opts['host']
       @orderbook = Arke::Orderbook.new(@market)
+      @connection = Faraday.new(:url => "https://#{opts['host']}") do |builder|
+        builder.adapter :em_synchrony
+      end
     end
 
     def process_message(msg)
@@ -90,7 +93,32 @@ module Arke::Exchange
       Arke::Log.info "Closing code: #{e.code} Reason: #{e.reason}"
     end
 
+    def build_order(data, side)
+      Arke::Order.new(
+        @market,
+        data['price'].to_f,
+        data['amount'].to_f,
+        side
+      )
+    end
+
+    def update_orderbook
+      snapshot = JSON.parse(@connection.get("/v1/book/#{@market.upcase}").body)
+      snapshot['bids'].each do |order|
+        @orderbook.update(
+          build_order(order, :buy)
+        )
+      end
+      snapshot['asks'].each do |order|
+        @orderbook.update(
+          build_order(order, :sell)
+        )
+      end
+      @orderbook
+    end
+
     def start
+      update_orderbook
       @ws = Faye::WebSocket::Client.new(@url)
 
       @ws.on(:open) do |e|
