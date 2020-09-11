@@ -31,8 +31,8 @@ module Arke::Exchange
         {
           market: order.market.downcase,
           side:   order.side.to_s,
-          volume: order.amount,
-          price:  order.price
+          volume: order.amount.to_f.to_s,
+          price:  order.price.to_s
         }
       )
       @open_orders.add_order(order, response.env.body['id']) if response.env.status == 201 && response.env.body['id']
@@ -69,7 +69,8 @@ module Arke::Exchange
 
     # Helper method, generates headers to authenticate with +api_key+
     def generate_headers
-      nonce = Time.now.to_i.to_s
+      nonce = (Time.now.utc.to_f * 1000).to_i.to_s
+
       {
         'X-Auth-Apikey' => @api_key,
         'X-Auth-Nonce' => nonce,
