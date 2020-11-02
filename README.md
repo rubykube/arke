@@ -2,7 +2,7 @@
 
 # Arke
 
-Arke is a trading bot platform built by [Openware](https://www.openware.com).
+Arke is a trading bot platform built by Openware [Cryptocurrency exchange software](https://www.openware.com).
 
 ## Development
 
